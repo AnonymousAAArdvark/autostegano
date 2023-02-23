@@ -1,0 +1,254 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    -webkit-text-size-adjust: 100%;
+    background-color: #efefef;
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif;
+    color: #2c374a;
+}
+
+h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/** { margin: 0; padding: 0; }*/
+
+/*html { height: 100%; }*/
+
+/*body {*/
+/*  font-family: 'Lucida Grande','Trebuchet MS','Bitstream Vera Sans',Verdana,Helvetica,sans-serif;*/
+/*  min-height: 100%;*/
+/*}*/
+
+/*h1, h2, h3, h4 {*/
+/*  font-weight: normal;*/
+/*  font-family: futura, 'century gothic', 'twentieth century', calibri, verdana, helvetica, arial, serif;*/
+/*}*/
+
+/*h1 {*/
+/*  font-size: 52px;*/
+/*  padding: 40px 0;*/
+/*}*/
+
+/*.wrapper {*/
+/*  margin: 0 auto;*/
+/*  width: 790px;*/
+/*}*/
+
+/*.app { margin: 0 0 60px; }*/
+
+/*.image-container {*/
+/*  margin: 0 auto 40px;*/
+/*  width: 840px;*/
+/*  height: 380px;*/
+/*  background: #eee;*/
+/*  position: relative;*/
+/*}*/
+
+/*.main-image-container {*/
+/*  margin: 0;*/
+/*  width: 600px;*/
+/*  position: relative;*/
+/*}*/
+
+/*.main-image {*/
+/*  width: 600px;*/
+/*  max-height: 600px;*/
+/*}*/
+
+/*.drop-target {*/
+/*  position: fixed;*/
+/*  left: 0; top: 0; right: 0; bottom: 0;*/
+/*  z-index: 1000;*/
+/*}*/
+
+/*.drop-target.active {*/
+/*  background: rgba(0, 100, 200, 0.1);*/
+/*  outline: 5px dashed #00a;*/
+/*  outline-offset: -5px;*/
+/*}*/
+
+/*.image-container > img,*/
+/*.image-container > canvas,*/
+/*.image-container > .placeholder {*/
+/*  box-shadow: 2px 2px 20px 0px #bbb;*/
+/*  display: block;*/
+/*  position: absolute; left: 0; top: -10px;*/
+/*}*/
+
+/*.info-bar {*/
+/*  background: #222;*/
+/*  margin: 0; padding: 4px 10px;*/
+/*  width: 480px;*/
+/*  color: #fff;*/
+/*  position: absolute; bottom: -10px; left: 0;*/
+/*}*/
+
+/*.options {*/
+/*  height: 64px;*/
+/*  margin: 0 0 20px;*/
+/*}*/
+
+/*!* Clearfix hack: http://www.positioniseverything.net/easyclearing.html *!*/
+/*.clearfix:after {*/
+/*  content: ".";*/
+/*  display: block;*/
+/*  height: 0;*/
+/*  clear: both;*/
+/*  visibility: hidden;*/
+/*}*/
+
+/*.slick-next:before, .slick-prev:before {*/
+/*  color: #888;*/
+/*}*/
+
+/*.caption {*/
+/*  margin: 4px 0;*/
+/*}*/
+
+/*.caption a {*/
+/*  text-decoration: none;*/
+/*  color: #aaa;*/
+/*  font-size: 12px;*/
+/*}*/
+
+/*.caption a:hover {*/
+/*  color: #555;*/
+/*}*/
+
+/*.stats {*/
+/*  position: absolute;*/
+/*  left: 620px;*/
+/*  right: 10px; top: 20px; bottom: 20px;*/
+/*  color: #444;*/
+/*  font-size: 12px;*/
+/*  line-height: 18px;*/
+/*}*/
+
+/*.stats p {*/
+/*  margin: 0 0 10px;*/
+/*}*/
+
+/*.stats table {*/
+/*  border-spacing: 0;*/
+/*  margin: 0 0 10px;*/
+/*}*/
+
+/*.stats th {*/
+/*  text-align: left;*/
+/*  padding-right: 10px;*/
+/*}*/
+
+/*.label {*/
+/*  color: #666;*/
+/*  !*font-variant: small-caps;*!*/
+/*  font-weight: normal;*/
+/*  font-size: 11px;*/
+/*  text-transform: uppercase;*/
+/*}*/
+
+/*.toggle-show-svs {*/
+/*  margin-top: 10px;*/
+/*  font-size: 11px;*/
+/*}*/
+
+/*.button {*/
+/*  text-decoration: none;*/
+/*  display: inline-block;*/
+/*  color: inherit;*/
+/*  padding: 4px 10px;*/
+/*  border-style: solid;*/
+/*  border-color: #ccc #ddd #ddd #ccc;*/
+/*  border-width: 1px 2px 3px 1px;*/
+/*  background: #f3f3f3;*/
+/*  cursor: pointer;*/
+/*}*/
+/*.button:hover {*/
+/*  background: #eee;*/
+/*}*/
+/*.button:active,*/
+/*.button.active {*/
+/*  border-color: #666 #888 #888 #666;*/
+/*  border-width: 2px 1px 1px 2px;*/
+/*  background: linear-gradient(to bottom, #aaa 0%, #ccc 100%);*/
+/*}*/
+/*.button.active:hover {*/
+/*  background: linear-gradient(to bottom, #999 0%, #bbb 100%);*/
+/*}*/
+
+/*.stats .hint {*/
+/*  color: #aaa;*/
+/*  margin: 0;*/
+/*  position: absolute;*/
+/*  bottom: 0; left: 0; right: 0;*/
+/*  font-size: 11px;*/
+/*}*/
+
+/*.check-box {*/
+/*  display: inline-block;*/
+/*  margin-right: 4px;*/
+/*  font-size: 15px;*/
+/*}*/
+
+/*.toggle-hover-original {*/
+/*  color: inherit;*/
+/*  text-decoration: none;*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*.toggle-hover-original .text {*/
+/*  text-decoration: line-through;*/
+/*}*/
+
+/*.toggle-hover-original.active .text {*/
+/*  text-decoration: none;*/
+/*}*/
+
+/*.valign {*/
+/*  display: inline-block;*/
+/*  padding: 4px 0 6px;*/
+/*  vertical-align: bottom;*/
+/*}*/
+
+/*!**/
+/* * Hack to style the file upload button*/
+/* * see http://stackoverflow.com/questions/1084925/input-type-file-show-only-button*/
+/* *!*/
+/*.file-input-button {*/
+/*  position: relative;*/
+/*  font-size: inherit;*/
+/*  cursor: default;*/
+/*  padding: 3px 6px;*/
+/*  margin: 0 5px;*/
+/*  overflow: hidden;*/
+/*  vertical-align: bottom;*/
+/*}*/
+
+/*.file-input-button span {*/
+/*  cursor: pointer;*/
+/*  font-size: 14px;*/
+/*}*/
+
+/*.file-input-button input {*/
+/*  cursor: pointer;*/
+/*  display: block;*/
+/*  position: absolute; top: 0; right: 0;*/
+/*  height: 100%;*/
+/*  opacity: 0;*/
+/*  font-size: 40px;*/
+/*}*/
+
+/*.explanation, .credits {*/
+/*  margin: 20px 0;*/
+/*  color: #444;*/
+/*  font-size: 13px;*/
+/*  line-height: 18px;*/
+/*}*/

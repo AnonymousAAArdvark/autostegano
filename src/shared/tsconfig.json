@@ -1,0 +1,12 @@
+{
+  "extends": "../generic-tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "lib": ["DOM", "ES2015", "ScriptHost"]
+  },
+  "references": [
+    {
+      "path": "../main-app",
+    }
+  ]
+}

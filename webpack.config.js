@@ -40,7 +40,6 @@ module.exports = {
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
-        { context: "node_modules/nouislider/distribute", from: "nouislider.min.css" },
         { context: "node_modules/rc-slider/assets", from: "index.css"},
         { context: "public", from: "**/*" },
       ],

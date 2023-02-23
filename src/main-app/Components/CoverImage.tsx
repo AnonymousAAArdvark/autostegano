@@ -1,7 +1,5 @@
 import * as React from "react";
 import { getImageData, loadImage } from "../image-functions";
-import { MaxLSBSlider } from "./Slider/MaxLSBSlider";
-import { ResizeSlider } from "./Slider/ResizeSlider";
 import { FileInputField } from "./FileInputField";
 import { StegView } from "../CanvasView/StegView";
 import { StegComputationManager, StegInfo } from "../ComputationManager/stegComputationManager";
@@ -379,10 +377,10 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
         </div>
         <div className="wrapper">
           <div className="options">
-            <MaxLSBSlider value={maxLsb} onUpdate={this.onUpdateMaxLSB.bind(this)} />
+            {/*<MaxLSBSlider value={maxLsb} onUpdate={this.onUpdateMaxLSB.bind(this)} />*/}
           </div>
           <div className="options">
-            <ResizeSlider value={scale} onUpdate={this.onUpdateScale.bind(this)} />
+            {/*<ResizeSlider value={scale} onUpdate={this.onUpdateScale.bind(this)} />*/}
           </div>
           <button onClick={this.onAutoScale}>Auto Scale</button>
           <button onClick={this.onAutoMaxLsb}>Auto MaxLsb</button>

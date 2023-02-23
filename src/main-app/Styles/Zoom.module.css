@@ -1,0 +1,27 @@
+.figure {
+    background-repeat: no-repeat;
+    background-size: 100%;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    filter: drop-shadow(0 2px 4px #999999);
+    cursor: pointer;
+    transform-origin: top left;
+    transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.figure:hover {
+    background-size: 200%; /* increased zoom */
+    transform: scale(1.2);
+    z-index: 1;
+    filter: drop-shadow(0 4px 8px #353535);
+}
+
+.figure:hover img {
+    opacity: 0;
+}
+
+.img {
+    display: block;
+    width: 100%;
+}

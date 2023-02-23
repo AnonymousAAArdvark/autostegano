@@ -1,7 +1,5 @@
 import * as React from "react";
 import { getImageData, imageDataToPixels, loadImage } from "../image-functions";
-import { SingularValuesSlider } from "./Slider/SingularValuesSlider";
-import { ResizeSlider } from "./Slider/ResizeSlider";
 import { FileInputField } from "./FileInputField";
 import { SvdApproximation } from "../CanvasView/SvdApproximation";
 import { SvdComputationManager } from "../ComputationManager/svdComputationManager";
@@ -390,15 +388,15 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
         </div>
         <div className="wrapper">
           <div className="options">
-            <SingularValuesSlider
-              value={numSvs}
-              maxSvs={maxSvs}
-              onUpdate={this.onUpdateSvs.bind(this)}
-              max={Math.min(w, h)}
-            />
+            {/*<SingularValuesSlider*/}
+            {/*  value={numSvs}*/}
+            {/*  maxSvs={maxSvs}*/}
+            {/*  onUpdate={this.onUpdateSvs.bind(this)}*/}
+            {/*  max={Math.min(w, h)}*/}
+            {/*/>*/}
           </div>
           <div className="options">
-            <ResizeSlider value={scale} onUpdate={this.onUpdateScale.bind(this)} />
+            {/*<ResizeSlider value={scale} onUpdate={this.onUpdateScale.bind(this)} />*/}
           </div>
           <button onClick={this.onAutoScale}>Auto Scale</button>
           <button onClick={this.onAutoNumSvs}>Auto NumSvs</button>

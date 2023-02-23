@@ -2,9 +2,9 @@ import * as React from "react";
 import Navbar from "./Components/Navbar";
 import { HiddenImage } from "./Components/HiddenImage";
 import { CoverImage } from "./Components/CoverImage";
+import { Zoom } from "./Components/Zoom";
 import { SvdStatus, SvdState } from "./svdstate";
 import Slider from "rc-slider";
-import { TfiAngleRight } from "react-icons/tfi";
 import { VscChevronRight } from "react-icons/vsc"
 import styles from "./Styles/App.module.css";
 
@@ -146,7 +146,8 @@ export class App extends React.Component<AppProps, AppState> {
               <button className={styles.upload_btn}>Upload Image</button>
             </div>
             <div className={styles.image_container}>
-              <img src={"example-images/mountains_sea.jpg"} className={styles.image}/>
+              {/*<img src={"example-images/mountains_sea.jpg"} className={styles.image}/>*/}
+              <Zoom />
             </div>
             <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
               <p className={styles.calc}>643(width) * 439(height) * 3(channels) =

@@ -13,19 +13,22 @@
 }
 
 .hidden_image_container {
-    padding: 0 5px 20px 30px;
+    padding: 0 5px 10px 30px;
     width: 100%;
 }
 
 .info_container {
     display: flex;
+    margin-top: 55px;
     width: 25%;
+    height: 45vh;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
 }
 
 .cover_image_container {
-    padding: 0 30px 20px 5px;
+    padding: 0 30px 10px 5px;
     width: 100%;
 }
 
@@ -41,53 +44,6 @@
     margin-bottom: 5px;
     font-size: 32px;
     border-bottom: 3px solid #2c374a;
-}
-
-.image_top {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0;
-}
-
-.hover_tip {
-    align-self: flex-end;
-    margin-bottom: 0;
-    margin-top: 0;
-    background-color: #e5e5e5;
-    padding: 7px 10px;
-    font-size: 18px;
-}
-
-.upload_btn {
-    margin: 10px 0 5px 0;
-    height: 35px;
-    padding: 4px 8px;
-    color: #fbfbfb;
-    background-color: #1184ea;
-    border-radius: 5px;
-    border: 2px solid #0072da;
-    cursor: pointer;
-    font-size: 18px;
-}
-
-.upload_btn:hover {
-    background-color: #0d7ee3;
-}
-
-.upload_btn:active {
-    background-color: #2c95f1;
-}
-
-.image_container {
-    background-color: #e5e5e5;
-    display: flex;
-    justify-content: center;
-}
-
-.image {
-    max-width: 100%;
-    width: 100%;
-    filter: drop-shadow(0 2px 4px #353535);
 }
 
 .calc_container {
@@ -149,6 +105,11 @@
     background-color: #2c95f1;
 }
 
+.slider {
+    margin-bottom: 20px;
+    z-index: 0;
+}
+
 .slider > div:nth-of-type(1) {
 }
 
@@ -193,9 +154,11 @@
     font-size: 23px;
     background-color: #fbfbfb;
     color: inherit;
-    transition: background-color 0.35s ease-out, color 0.35s ease-out;
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
     cursor: pointer;
     border: 2px solid #e6e6e6;
+    -webkit-touch-callout: none;
+    user-select: none;
 }
 
 .mode_btn:nth-of-type(1) {
@@ -220,10 +183,9 @@
 }
 
 .ratio_container {
-    padding: 0 15px;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    margin-top: 8vw;
 }
 
 .top_ratio {
@@ -238,13 +200,18 @@
 }
 
 .status_arrow {
+    transition: transform .2s ease-in-out;
     font-size: 10vw;
-    margin-top: 1vw;
     color: #00a700;
+}
+
+.rotate {
+    transform: rotate(-180deg);
 }
 
 .download_container {
     width: 100%;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
 }

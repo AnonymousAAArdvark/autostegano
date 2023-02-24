@@ -1,27 +1,39 @@
+.image_container {
+    z-index: 1;
+    background-color: #e5e5e5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 45vh;
+}
+
 .figure {
     background-repeat: no-repeat;
     background-size: 100%;
-    max-width: 100%;
     width: 100%;
-    margin: 0;
-    filter: drop-shadow(0 2px 4px #999999);
+    aspect-ratio: inherit;
+    object-fit: contain;
+    box-shadow: 0 2px 8px #999999;
     cursor: pointer;
-    transform-origin: top left;
-    transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out;
+    transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+    margin: auto;
 }
 
 .figure:hover {
-    background-size: 200%; /* increased zoom */
-    transform: scale(1.2);
-    z-index: 1;
-    filter: drop-shadow(0 4px 8px #353535);
+    z-index: 2;
+    background-size: 300%;
+    transform: scale(1.4);
+    box-shadow: 0 4px 16px #353535;
 }
 
-.figure:hover img {
+.figure:hover img, .cover_figure:hover img {
+    z-index: 2;
     opacity: 0;
 }
 
 .img {
     display: block;
-    width: 100%;
+    /*width: 100%;*/
+    height: 100%;
 }

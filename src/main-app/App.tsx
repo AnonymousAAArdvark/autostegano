@@ -2,7 +2,7 @@ import * as React from "react";
 import Navbar from "./Components/Navbar";
 import { HiddenImage } from "./Components/HiddenImage";
 import { CoverImage } from "./Components/CoverImage";
-import { Zoom } from "./Components/Zoom";
+import { ImageContainer } from "./Components/ImageContainer";
 import { SvdStatus, SvdState } from "./svdstate";
 import Slider from "rc-slider";
 import { VscChevronRight } from "react-icons/vsc"
@@ -18,6 +18,7 @@ interface AppState {
   numSvs: number;
   maxLsb: number;
   svdState: SvdState;
+  mode: string;
 }
 
 type AppProps = Record<string, unknown>;
@@ -35,6 +36,7 @@ export class App extends React.Component<AppProps, AppState> {
       numSvs: 0,
       maxLsb: 0,
       svdState: { status: SvdStatus.CURRENTLY_COMPUTING },
+      mode: "encode",
     };
   }
 
@@ -118,6 +120,11 @@ export class App extends React.Component<AppProps, AppState> {
     return this.clamp(Math.ceil(reqMaxLsb), 1, 8);
   }
 
+  handleModeChange(event: React.ChangeEvent<HTMLInputElement>): void {
+    const mode = event.target.value;
+    this.setState({ mode });
+  }
+
   render(): JSX.Element {
     return (
       <div>
@@ -128,9 +135,9 @@ export class App extends React.Component<AppProps, AppState> {
           </div>
           <div className={styles.group_btn_container}>
             <div className={styles.group_btn}>
-              <input type={"radio"} id={"encode"} name={"mode"}/>
+              <input type={"radio"} id={"encode"} name={"mode"} value={"encode"} checked={this.state.mode === "encode"} onChange={this.handleModeChange.bind(this)}/>
               <label className={styles.mode_btn} htmlFor={"encode"}>Encode</label>
-              <input type={"radio"} id={"decode"} name={"mode"}/>
+              <input type={"radio"} id={"decode"} name={"mode"} value={"decode"} checked={this.state.mode === "decode"} onChange={this.handleModeChange.bind(this)}/>
               <label className={styles.mode_btn} htmlFor={"decode"}>Decode</label>
             </div>
           </div>
@@ -140,15 +147,11 @@ export class App extends React.Component<AppProps, AppState> {
         </div>
         <div className={styles.main}>
           <div className={styles.hidden_image_container}>
-            <div className={styles.image_top}>
-              <p className={styles.hover_tip}>Hover to zoom in</p>
-              <input type="file" id="hiddenImg" style={{display: "none"}}/>
-              <button className={styles.upload_btn}>Upload Image</button>
-            </div>
-            <div className={styles.image_container}>
-              {/*<img src={"example-images/mountains_sea.jpg"} className={styles.image}/>*/}
-              <Zoom />
-            </div>
+            <ImageContainer
+              src={"example-images/hidden-image.jpg"}
+              origSrc={"example-images/mountains_sea_5svs.jpg"}
+              imgType={"hidden"}
+            />
             <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
               <p className={styles.calc}>643(width) * 439(height) * 3(channels) =
                 <span className={styles.calc_result}> 29455 bits</span>
@@ -156,12 +159,12 @@ export class App extends React.Component<AppProps, AppState> {
             </div>
             <div className={styles.options_container}>
               <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Number of Singular Values</p>
+                <p className={styles.slider_label}>Number of Singular Values: 345</p>
                 <button className={`${styles.auto_button}`}>Auto</button>
               </div>
               <Slider min={0} max={100} defaultValue={10} className={styles.slider} />
               <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Cover Image Scale</p>
+                <p className={styles.slider_label}>Cover Image Scale: 3.4x</p>
                 <button className={`${styles.auto_button}`}>Auto</button>
               </div>
               <Slider min={0} max={100} defaultValue={10} className={styles.slider} />
@@ -172,17 +175,14 @@ export class App extends React.Component<AppProps, AppState> {
               <h2 className={styles.top_ratio}>12,344</h2>
               <h2 className={styles.bottom_ratio}>32,445</h2>
             </div>
-            <VscChevronRight className={styles.status_arrow}/>
+            <VscChevronRight className={`${styles.status_arrow} ${this.state.mode === "encode" ? "" : styles.rotate}`}/>
           </div>
           <div className={styles.cover_image_container}>
-            <div className={styles.image_top}>
-              <input type="file" id="coverImg" style={{display: "none"}}/>
-              <button className={styles.upload_btn}>Upload Image</button>
-              <p className={styles.hover_tip}>Hover to zoom in</p>
-            </div>
-            <div className={styles.image_container}>
-              <img src={"example-images/mountains_sea.jpg"} className={styles.image}/>
-            </div>
+            <ImageContainer
+              src={"example-images/mountains_sea.jpg"}
+              origSrc={"example-images/mountains_sea_5svs.jpg"}
+              imgType={"cover"}
+            />
             <div className={`${styles.calc_container}`}>
               <p className={styles.calc}>
                 <span className={styles.calc_result}>29455 bits </span>
@@ -191,12 +191,12 @@ export class App extends React.Component<AppProps, AppState> {
             </div>
             <div className={styles.options_container}>
               <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Maximum Bit Encoded</p>
+                <p className={styles.slider_label}>Maximum Bits Encoded: 4</p>
                 <button className={`${styles.auto_button}`}>Auto</button>
               </div>
-              <Slider min={0} max={100} defaultValue={10} className={styles.slider} />
+              <Slider min={1} max={8} defaultValue={10} step={1} activeDotStyle={{borderColor: "#0072da"}} marks={{ 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8 }} className={styles.slider} />
               <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Hidden Image Scale</p>
+                <p className={styles.slider_label}>Hidden Image Scale: 1.2x</p>
                 <button className={`${styles.auto_button}`}>Auto</button>
               </div>
               <Slider min={0} max={100} defaultValue={10} className={styles.slider} />

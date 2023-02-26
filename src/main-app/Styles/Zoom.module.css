@@ -9,27 +9,62 @@
 }
 
 .figure {
+    position: relative;
     background-repeat: no-repeat;
     background-size: 100%;
     width: 100%;
     aspect-ratio: inherit;
     object-fit: contain;
-    box-shadow: 0 2px 8px #999999;
-    cursor: pointer;
-    transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
     margin: auto;
 }
 
-.figure:hover {
+.figure_active {
+    box-shadow: 0 2px 8px #999999;
+    cursor: pointer;
+    transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+}
+
+.figure_active:hover {
     z-index: 2;
     background-size: 300%;
     transform: scale(1.4);
     box-shadow: 0 4px 16px #353535;
 }
 
+.figure_inactive {
+    position: relative;
+}
+
+.figure_inactive::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
 .figure:hover img, .cover_figure:hover img {
     z-index: 2;
     opacity: 0;
+}
+
+.computing_msg_container {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    padding-left: 5px;
+    background-color: rgba(0, 0, 0, .5);
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.computing_msg {
+    color: #fbfbfb;
+    margin: 10px 5px;
+    font-size: 18px;
 }
 
 .img {

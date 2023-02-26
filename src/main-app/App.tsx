@@ -151,6 +151,7 @@ export class App extends React.Component<AppProps, AppState> {
               src={"example-images/hidden-image.jpg"}
               origSrc={"example-images/mountains_sea_5svs.jpg"}
               imgType={"hidden"}
+              computingMsg={"Computing Resize..."}
             />
             <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
               <p className={styles.calc}>643(width) * 439(height) * 3(channels) =
@@ -182,6 +183,7 @@ export class App extends React.Component<AppProps, AppState> {
               src={"example-images/mountains_sea.jpg"}
               origSrc={"example-images/mountains_sea_5svs.jpg"}
               imgType={"cover"}
+              computingMsg={"Computing Resize..."}
             />
             <div className={`${styles.calc_container}`}>
               <p className={styles.calc}>

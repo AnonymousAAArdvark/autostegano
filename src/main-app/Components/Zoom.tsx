@@ -1,4 +1,5 @@
 import * as React from "react";
+import {SpinningCircles, TailSpin} from "react-loading-icons";
 import styles from "../Styles/Zoom.module.css";
 
 interface ZoomState {
@@ -11,6 +12,7 @@ export interface ZoomProps {
   origSrc: string;
   src: string;
   imgType: string;
+  computingMsg: string;
   onUpdateStatus: (status: string) => void;
 }
 export class Zoom extends React.Component<ZoomProps, ZoomState> {
@@ -59,45 +61,66 @@ export class Zoom extends React.Component<ZoomProps, ZoomState> {
   }
 
   handleMouseMove(e: React.MouseEvent<HTMLElement>) {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - left) / width * 100;
-    const y = (e.clientY - top) / height * 100;
-    this.setState({ backgroundPosition: `${x}% ${y}%` });
+    if (this.props.computingMsg === "") {
+      const {left, top, width, height} = e.currentTarget.getBoundingClientRect();
+      const x = (e.clientX - left) / width * 100;
+      const y = (e.clientY - top) / height * 100;
+      this.setState({backgroundPosition: `${x}% ${y}%`});
+    }
   }
 
   handleMouseClick(e: React.MouseEvent<HTMLElement>) {
-    if (this.state.backgroundImage === `url(${this.props.src})`) {
-      this.setState({ backgroundImage: `url(${this.props.origSrc})`});
-    } else {
-      this.setState({ backgroundImage: `url(${this.props.src})`});
+    if (this.props.computingMsg === "") {
+      if (this.state.backgroundImage === `url(${this.props.src})`) {
+        this.setState({backgroundImage: `url(${this.props.origSrc})`});
+      } else {
+        this.setState({backgroundImage: `url(${this.props.src})`});
+      }
+      this.props.onUpdateStatus("click");
     }
-    this.props.onUpdateStatus("click");
   }
 
   handleMouseEnter(e: React.MouseEvent<HTMLElement>) {
-    this.props.onUpdateStatus("hover");
+    if (this.props.computingMsg === "") {
+      this.props.onUpdateStatus("hover");
+    }
   }
 
   handleMouseLeave(e: React.MouseEvent<HTMLElement>) {
-    this.setState({ backgroundImage: `url(${this.props.src})`});
-    this.props.onUpdateStatus("leave");
+    if (this.props.computingMsg === "") {
+      this.setState({backgroundImage: `url(${this.props.src})`});
+      this.props.onUpdateStatus("leave");
+    }
   }
 
   render(): JSX.Element {
-    const { imgType } = this.props;
+    const { computingMsg } = this.props;
+    let computingMsgElement: JSX.Element;
+
+    if (computingMsg !== "") {
+      computingMsgElement = (
+        <div className={styles.computing_msg_container}>
+          <TailSpin height={20} stroke={"#fbfbfb"} strokeWidth={3}/>
+          <p className={styles.computing_msg}>{ computingMsg }</p>
+        </div>
+      )
+    } else {
+      computingMsgElement = (<></>);
+    }
+
     return (
-      // <div className={styles.resize_box} ref={this.resizeBox}>
       <div ref={this.resizeBox} className={styles.image_container}>
-      <figure
-          onMouseMove={(e) => this.handleMouseMove(e)}
-          onClick={(e) => this.handleMouseClick(e)}
-          onMouseEnter={(e) => this.handleMouseEnter(e)}
-          onMouseLeave={(e) => this.handleMouseLeave(e)}
-          style={this.state}
-          ref={this.figure}
-          className={styles.figure}
+        <figure
+            onMouseMove={(e) => this.handleMouseMove(e)}
+            onClick={(e) => this.handleMouseClick(e)}
+            onMouseEnter={(e) => this.handleMouseEnter(e)}
+            onMouseLeave={(e) => this.handleMouseLeave(e)}
+            style={this.state}
+            ref={this.figure}
+            className={`${styles.figure} ${computingMsg !== "" ? styles.figure_inactive : styles.figure_active}`}
         >
           <img src={this.props.src} onLoad={this.updateFigureSize} className={styles.img}/>
+          { computingMsgElement }
          </figure>
        </div>
     );

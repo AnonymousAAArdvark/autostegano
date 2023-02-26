@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Zoom } from "./Zoom";
+import { DragDropUpload } from "./DragDropUpload";
 import styles from "../Styles/ImageContainer.module.css";
 
 interface ImageContainerState {
@@ -10,6 +11,7 @@ export interface ImageContainerProps {
   origSrc: string,
   src: string,
   imgType: string,
+  computingMsg: string,
 }
 
 export class ImageContainer extends React.Component<ImageContainerProps, ImageContainerState> {
@@ -35,7 +37,7 @@ export class ImageContainer extends React.Component<ImageContainerProps, ImageCo
   }
 
   render(): JSX.Element {
-    const { src, origSrc, imgType } = this.props;
+    const { src, origSrc, imgType, computingMsg } = this.props;
     const { tipStatus } = this.state
     let image_top: JSX.Element;
 
@@ -68,12 +70,14 @@ export class ImageContainer extends React.Component<ImageContainerProps, ImageCo
     return (
       <div>
         { image_top }
-        <Zoom
-          src={src}
-          origSrc={origSrc}
-          imgType={imgType}
-          onUpdateStatus={this.onUpdateStatus.bind(this)}
-        />
+        {/*<Zoom*/}
+        {/*  src={src}*/}
+        {/*  origSrc={origSrc}*/}
+        {/*  imgType={imgType}*/}
+        {/*  computingMsg={computingMsg}*/}
+        {/*  onUpdateStatus={this.onUpdateStatus.bind(this)}*/}
+        {/*/>*/}
+        <DragDropUpload />
       </div>
     );
   }

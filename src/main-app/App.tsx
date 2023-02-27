@@ -5,6 +5,9 @@ import { CoverImage } from "./Components/CoverImage";
 import { ImageContainer } from "./Components/ImageContainer";
 import { SvdStatus, SvdState } from "./svdstate";
 import Slider from "rc-slider";
+import { MaxLSBSlider } from "./Components/Slider/MaxLSBSlider";
+import { ResizeSlider } from "./Components/Slider/ResizeSlider";
+import { SingularValuesSlider } from "./Components/Slider/SingularValuesSlider";
 import { VscChevronRight } from "react-icons/vsc"
 import styles from "./Styles/App.module.css";
 
@@ -33,8 +36,8 @@ export class App extends React.Component<AppProps, AppState> {
       coverHeight: 0,
       hiddenScale: 1,
       coverScale: 1,
-      numSvs: 0,
-      maxLsb: 0,
+      numSvs: 1,
+      maxLsb: 1,
       svdState: { status: SvdStatus.CURRENTLY_COMPUTING },
       mode: "encode",
     };
@@ -126,114 +129,100 @@ export class App extends React.Component<AppProps, AppState> {
   }
 
   render(): JSX.Element {
+    const { maxLsb, numSvs, hiddenScale, coverScale } = this.state;
+
     return (
       <div>
-        <Navbar/>
-        <div className={styles.header_container}>
-          <div className={styles.section_label_container}>
-            <h2 className={styles.section_label}>Hidden Image</h2>
-          </div>
-          <div className={styles.group_btn_container}>
-            <div className={styles.group_btn}>
-              <input type={"radio"} id={"encode"} name={"mode"} value={"encode"} checked={this.state.mode === "encode"} onChange={this.handleModeChange.bind(this)}/>
-              <label className={styles.mode_btn} htmlFor={"encode"}>Encode</label>
-              <input type={"radio"} id={"decode"} name={"mode"} value={"decode"} checked={this.state.mode === "decode"} onChange={this.handleModeChange.bind(this)}/>
-              <label className={styles.mode_btn} htmlFor={"decode"}>Decode</label>
-            </div>
-          </div>
-          <div className={styles.section_label_container}>
-            <h2 className={styles.section_label}>Cover Image</h2>
-          </div>
-        </div>
-        <div className={styles.main}>
-          <div className={styles.hidden_image_container}>
-            <ImageContainer
-              src={"example-images/hidden-image.jpg"}
-              origSrc={"example-images/mountains_sea_5svs.jpg"}
-              imgType={"hidden"}
-              computingMsg={"Computing Resize..."}
-            />
-            <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
-              <p className={styles.calc}>643(width) * 439(height) * 3(channels) =
-                <span className={styles.calc_result}> 29455 bits</span>
-              </p>
-            </div>
-            <div className={styles.options_container}>
-              <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Number of Singular Values: 345</p>
-                <button className={`${styles.auto_button}`}>Auto</button>
-              </div>
-              <Slider min={0} max={100} defaultValue={10} className={styles.slider} />
-              <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Cover Image Scale: 3.4x</p>
-                <button className={`${styles.auto_button}`}>Auto</button>
-              </div>
-              <Slider min={0} max={100} defaultValue={10} className={styles.slider} />
-            </div>
-          </div>
-          <div className={styles.info_container}>
-            <div className={styles.ratio_container}>
-              <h2 className={styles.top_ratio}>12,344</h2>
-              <h2 className={styles.bottom_ratio}>32,445</h2>
-            </div>
-            <VscChevronRight className={`${styles.status_arrow} ${this.state.mode === "encode" ? "" : styles.rotate}`}/>
-          </div>
-          <div className={styles.cover_image_container}>
-            <ImageContainer
-              src={"example-images/mountains_sea.jpg"}
-              origSrc={"example-images/mountains_sea_5svs.jpg"}
-              imgType={"cover"}
-              computingMsg={"Computing Resize..."}
-            />
-            <div className={`${styles.calc_container}`}>
-              <p className={styles.calc}>
-                <span className={styles.calc_result}>29455 bits </span>
-                = 643(width) * 439(height) * 3(channels)
-              </p>
-            </div>
-            <div className={styles.options_container}>
-              <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Maximum Bits Encoded: 4</p>
-                <button className={`${styles.auto_button}`}>Auto</button>
-              </div>
-              <Slider min={1} max={8} defaultValue={10} step={1} activeDotStyle={{borderColor: "#0072da"}} marks={{ 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8 }} className={styles.slider} />
-              <div className={styles.slider_label_container}>
-                <p className={styles.slider_label}>Hidden Image Scale: 1.2x</p>
-                <button className={`${styles.auto_button}`}>Auto</button>
-              </div>
-              <Slider min={0} max={100} defaultValue={10} className={styles.slider} />
-            </div>
-          </div>
-        </div>
-        <div className={styles.download_container}>
-          <button className={styles.download_btn}>Download Encoded Cover Image</button>
-        </div>
-        {/*<HiddenImage*/}
-        {/*  hiddenWidth={this.state.hiddenWidth}*/}
-        {/*  hiddenHeight={this.state.hiddenHeight}*/}
-        {/*  onUpdateHiddenDimensions={this.onUpdateHiddenDimensions.bind(this)}*/}
-        {/*  hiddenScale={this.state.hiddenScale}*/}
-        {/*  onUpdateHiddenScale={this.onUpdateHiddenScale.bind(this)}*/}
-        {/*  numSvs={this.state.numSvs}*/}
-        {/*  onUpdateNumSvs={this.onUpdateNumSvs.bind(this)}*/}
-        {/*  autoHiddenScale={this.autoHiddenScale.bind(this)}*/}
-        {/*  autoNumSvs={this.autoNumSvs.bind(this)}*/}
-        {/*  svdState={this.state.svdState}*/}
-        {/*  onUpdateSvdState={this.onUpdateSvdState.bind(this)}*/}
-        {/*/>*/}
-        {/*<CoverImage*/}
-        {/*  coverWidth={this.state.coverWidth}*/}
-        {/*  coverHeight={this.state.coverHeight}*/}
-        {/*  onUpdateCoverDimensions={this.onUpdateCoverDimensions.bind(this)}*/}
-        {/*  coverScale={this.state.coverScale}*/}
-        {/*  onUpdateCoverScale={this.onUpdateCoverScale.bind(this)}*/}
-        {/*  maxLsb={this.state.maxLsb}*/}
-        {/*  onUpdateMaxLsb={this.onUpdateMaxLsb.bind(this)}*/}
-        {/*  autoCoverScale={this.autoCoverScale.bind(this)}*/}
-        {/*  autoMaxLsb={this.autoMaxLsb.bind(this)}*/}
-        {/*  numSvs={this.state.numSvs}*/}
-        {/*  svdState={this.state.svdState}*/}
-        {/*/>*/}
+        {/*<Navbar/>*/}
+        {/*<div className={styles.header_container}>*/}
+        {/*  <div className={styles.section_label_container}>*/}
+        {/*    <h2 className={styles.section_label}>Hidden Image</h2>*/}
+        {/*  </div>*/}
+        {/*  <div className={styles.group_btn_container}>*/}
+        {/*    <div className={styles.group_btn}>*/}
+        {/*      <input type={"radio"} id={"encode"} name={"mode"} value={"encode"} checked={this.state.mode === "encode"} onChange={this.handleModeChange.bind(this)}/>*/}
+        {/*      <label className={styles.mode_btn} htmlFor={"encode"}>Encode</label>*/}
+        {/*      <input type={"radio"} id={"decode"} name={"mode"} value={"decode"} checked={this.state.mode === "decode"} onChange={this.handleModeChange.bind(this)}/>*/}
+        {/*      <label className={styles.mode_btn} htmlFor={"decode"}>Decode</label>*/}
+        {/*    </div>*/}
+        {/*  </div>*/}
+        {/*  <div className={styles.section_label_container}>*/}
+        {/*    <h2 className={styles.section_label}>Cover Image</h2>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+        {/*<div className={styles.main}>*/}
+        {/*  <div className={styles.hidden_image_container}>*/}
+        {/*    <ImageContainer*/}
+        {/*      src={"example-images/hidden-image.jpg"}*/}
+        {/*      origSrc={"example-images/mountains_sea_5svs.jpg"}*/}
+        {/*      imgType={"hidden"}*/}
+        {/*      computingMsg={"Computing Resize..."}*/}
+        {/*    />*/}
+        {/*    <div className={`${styles.calc_container} ${styles.calc_container_left}`}>*/}
+        {/*      <p className={styles.calc}>643(width) * 439(height) * 3(channels) =*/}
+        {/*        <span className={styles.calc_result}> 29455 bits</span>*/}
+        {/*      </p>*/}
+        {/*    </div>*/}
+        {/*    <div className={styles.options_container}>*/}
+        {/*      <SingularValuesSlider value={numSvs} max={500} onChange={this.onUpdateNumSvs.bind(this)} />*/}
+        {/*      <ResizeSlider imageType={"Hidden"} value={hiddenScale} onChange={this.onUpdateHiddenScale.bind(this)} />*/}
+        {/*    </div>*/}
+        {/*  </div>*/}
+        {/*  <div className={styles.info_container}>*/}
+        {/*    <div className={styles.ratio_container}>*/}
+        {/*      <h2 className={styles.top_ratio}>12,344</h2>*/}
+        {/*      <h2 className={styles.bottom_ratio}>32,445</h2>*/}
+        {/*    </div>*/}
+        {/*    <VscChevronRight className={`${styles.status_arrow} ${this.state.mode === "encode" ? "" : styles.rotate}`}/>*/}
+        {/*  </div>*/}
+        {/*  <div className={styles.cover_image_container}>*/}
+        {/*    <ImageContainer*/}
+        {/*      src={"example-images/mountains_sea.jpg"}*/}
+        {/*      origSrc={"example-images/mountains_sea_5svs.jpg"}*/}
+        {/*      imgType={"cover"}*/}
+        {/*      computingMsg={"Computing Resize..."}*/}
+        {/*    />*/}
+        {/*    <div className={`${styles.calc_container}`}>*/}
+        {/*      <p className={styles.calc}>*/}
+        {/*        <span className={styles.calc_result}>29455 bits </span>*/}
+        {/*        = 643(width) * 439(height) * 3(channels)*/}
+        {/*      </p>*/}
+        {/*    </div>*/}
+        {/*    <div className={styles.options_container}>*/}
+        {/*      <MaxLSBSlider value={maxLsb} onChange={this.onUpdateMaxLsb.bind(this)}/>*/}
+        {/*      <ResizeSlider imageType={"Cover"} value={coverScale} onChange={this.onUpdateCoverScale.bind(this)} />*/}
+        {/*    </div>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+        {/*<div className={styles.download_container}>*/}
+        {/*  <button className={styles.download_btn}>Download Encoded Cover Image</button>*/}
+        {/*</div>*/}
+        <HiddenImage
+          hiddenWidth={this.state.hiddenWidth}
+          hiddenHeight={this.state.hiddenHeight}
+          onUpdateHiddenDimensions={this.onUpdateHiddenDimensions.bind(this)}
+          hiddenScale={this.state.hiddenScale}
+          onUpdateHiddenScale={this.onUpdateHiddenScale.bind(this)}
+          numSvs={this.state.numSvs}
+          onUpdateNumSvs={this.onUpdateNumSvs.bind(this)}
+          autoHiddenScale={this.autoHiddenScale.bind(this)}
+          autoNumSvs={this.autoNumSvs.bind(this)}
+          svdState={this.state.svdState}
+          onUpdateSvdState={this.onUpdateSvdState.bind(this)}
+        />
+        <CoverImage
+          coverWidth={this.state.coverWidth}
+          coverHeight={this.state.coverHeight}
+          onUpdateCoverDimensions={this.onUpdateCoverDimensions.bind(this)}
+          coverScale={this.state.coverScale}
+          onUpdateCoverScale={this.onUpdateCoverScale.bind(this)}
+          maxLsb={this.state.maxLsb}
+          onUpdateMaxLsb={this.onUpdateMaxLsb.bind(this)}
+          autoCoverScale={this.autoCoverScale.bind(this)}
+          autoMaxLsb={this.autoMaxLsb.bind(this)}
+          numSvs={this.state.numSvs}
+          svdState={this.state.svdState}
+        />
       </div>
     );
   }

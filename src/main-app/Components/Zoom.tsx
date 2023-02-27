@@ -82,6 +82,7 @@ export class Zoom extends React.Component<ZoomProps, ZoomState> {
 
   handleMouseEnter(e: React.MouseEvent<HTMLElement>) {
     if (this.props.computingMsg === "") {
+      this.setState({backgroundImage: `url(${this.props.src})`});
       this.props.onUpdateStatus("hover");
     }
   }

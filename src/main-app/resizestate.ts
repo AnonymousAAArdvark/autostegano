@@ -4,6 +4,7 @@ export enum ResizeStatus {
 }
 
 interface ResizeStateCurrentlyComputing {
+  sImg: HTMLImageElement;
   status: ResizeStatus.CURRENTLY_COMPUTING;
 }
 

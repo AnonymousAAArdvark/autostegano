@@ -8,10 +8,11 @@ interface ImageContainerState {
 }
 
 export interface ImageContainerProps {
-  origSrc: string,
+  origSrc: null | HTMLImageElement,
   src: string,
   imgType: string,
   computingMsg: string,
+  onUploadImage: (src: string) => void;
 }
 
 export class ImageContainer extends React.Component<ImageContainerProps, ImageContainerState> {
@@ -37,9 +38,10 @@ export class ImageContainer extends React.Component<ImageContainerProps, ImageCo
   }
 
   render(): JSX.Element {
-    const { src, origSrc, imgType, computingMsg } = this.props;
+    const { src, origSrc, imgType, computingMsg, onUploadImage } = this.props;
     const { tipStatus } = this.state
     let image_top: JSX.Element;
+    let main: JSX.Element;
 
     if (imgType === "hidden") {
       image_top = (
@@ -49,35 +51,44 @@ export class ImageContainer extends React.Component<ImageContainerProps, ImageCo
             <p className={`${styles.hover_tip} ${styles.left} ${tipStatus[1]}`}>Click to see original image</p>
             <p className={`${styles.hover_tip} ${styles.left} ${tipStatus[2]}`}>Click to see modified image</p>
           </div>
-          <input type="file" id="hiddenImg" style={{display: "none"}}/>
+          <input type="file" id="hiddenImg" accept={"image/jpeg, image/png"} multiple={false} style={{display: "none"}}/>
           <button className={styles.upload_btn}>Upload Image</button>
         </div>
       );
     } else {
       image_top = (
         <div className={styles.image_top}>
+          <input type="file" id="hiddenImg" accept={"image/jpeg, image/png"} multiple={false} style={{display: "none"}}/>
           <button className={styles.upload_btn}>Upload Image</button>
           <div className={styles.hover_container}>
             <p className={`${styles.hover_tip} ${styles.right} ${tipStatus[0]}`}>Hover to zoom in</p>
             <p className={`${styles.hover_tip} ${styles.right} ${tipStatus[1]}`}>Click to see original image</p>
             <p className={`${styles.hover_tip} ${styles.right} ${tipStatus[2]}`}>Click to see modified image</p>
           </div>
-          <input type="file" id="hiddenImg" style={{display: "none"}}/>
         </div>
+      );
+    }
+
+    if (origSrc === null) {
+      main = (
+        <DragDropUpload onUploadImage={onUploadImage.bind(this)} />
+      );
+    } else {
+      main = (
+        <Zoom
+          src={src}
+          origSrc={origSrc.src}
+          imgType={imgType}
+          computingMsg={computingMsg}
+          onUpdateStatus={this.onUpdateStatus.bind(this)}
+        />
       );
     }
 
     return (
       <div>
         { image_top }
-        {/*<Zoom*/}
-        {/*  src={src}*/}
-        {/*  origSrc={origSrc}*/}
-        {/*  imgType={imgType}*/}
-        {/*  computingMsg={computingMsg}*/}
-        {/*  onUpdateStatus={this.onUpdateStatus.bind(this)}*/}
-        {/*/>*/}
-        <DragDropUpload />
+        { main }
       </div>
     );
   }

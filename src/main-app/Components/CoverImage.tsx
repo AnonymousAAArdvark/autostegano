@@ -3,6 +3,8 @@ import { getImageData, loadImage } from "../image-functions";
 import { FileInputField } from "./FileInputField";
 import { StegView } from "../CanvasView/StegView";
 import { StegComputationManager, StegInfo } from "../ComputationManager/stegComputationManager";
+import { MaxLSBSlider } from "./Slider/MaxLSBSlider";
+import { ResizeSlider } from "./Slider/ResizeSlider";
 import { SvdState, SvdStatus } from "../svdstate";
 import { ResizeState, ResizeStatus } from "../resizestate";
 import { rgbMap } from "../rgb";
@@ -310,64 +312,6 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       }
     }
 
-    // const compressedSize = h * numSvs + numSvs + numSvs * w;
-    // const stats = (
-    //   <div className="stats">
-    //     <table>
-    //       <tbody>
-    //       <tr>
-    //         <th className="label">Image size</th>
-    //         <td>
-    //           {w} &times; {h}
-    //         </td>
-    //       </tr>
-    //       <tr>
-    //         <th className="label">#pixels</th>
-    //         <td>= {w * h}</td>
-    //       </tr>
-    //       </tbody>
-    //     </table>
-    //     <p>
-    //       <span className="label">Uncompressed size</span>
-    //       <br />
-    //       proportional to number of pixels
-    //     </p>
-    //     <p>
-    //       <span className="label">Compressed size</span>
-    //       <br />
-    //       approximately proportional to <br />
-    //       {h}&thinsp;&times;&thinsp;{numSvs} + {numSvs} + {numSvs}&thinsp;&times;&thinsp;{w} <br />={" "}
-    //       {compressedSize}
-    //     </p>
-    //     <p>
-    //       <span className="label">Compression ratio</span>
-    //       <br />
-    //       {w * h} / {compressedSize} = {((w * h) / compressedSize).toFixed(2)}
-    //     </p>
-    //     <p>
-    //       <a
-    //         className={"button toggle-show-svs " + (this.state.showSvs ? "active" : "")}
-    //         href="#"
-    //         onClick={this.clickShowSvs.bind(this)}
-    //       >
-    //         Show singular values
-    //       </a>
-    //     </p>
-    //     <p className="hint">
-    //       <a
-    //         className={"toggle-hover-original " + (this.state.hoverToSeeOriginal ? "active" : "")}
-    //         href="#"
-    //         onClick={this.clickHoverToSeeOriginal.bind(this)}
-    //       >
-    //         <span className="check-box">
-    //           {this.state.hoverToSeeOriginal ? <span>☑</span> : <span>☐</span>}
-    //         </span>
-    //         <span className="text">hover to see the original picture</span>
-    //       </a>
-    //     </p>
-    //   </div>
-    // );
-
     return (
       <div>
         {this.state.hover ? dropTarget : ""}
@@ -377,10 +321,10 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
         </div>
         <div className="wrapper">
           <div className="options">
-            {/*<MaxLSBSlider value={maxLsb} onUpdate={this.onUpdateMaxLSB.bind(this)} />*/}
+            <MaxLSBSlider value={maxLsb} onChange={this.onUpdateMaxLSB.bind(this)} />
           </div>
           <div className="options">
-            {/*<ResizeSlider value={scale} onUpdate={this.onUpdateScale.bind(this)} />*/}
+            <ResizeSlider imageType={"Cover"} value={scale} onChange={this.onUpdateScale.bind(this)} />
           </div>
           <button onClick={this.onAutoScale}>Auto Scale</button>
           <button onClick={this.onAutoMaxLsb}>Auto MaxLsb</button>

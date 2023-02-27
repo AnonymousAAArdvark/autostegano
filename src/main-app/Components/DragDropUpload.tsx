@@ -7,7 +7,7 @@ interface DragDropUploadState {
 }
 
 export interface DragDropUploadProps {
-
+  onUploadImage: (src: string) => void;
 }
 
 export class DragDropUpload extends React.Component<DragDropUploadProps, DragDropUploadState> {
@@ -32,15 +32,16 @@ export class DragDropUpload extends React.Component<DragDropUploadProps, DragDro
     e.preventDefault();
     e.stopPropagation();
     this.setState( { dragActive: false });
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      console.log(e.dataTransfer.files)
+    const imageTypes = ["image/png", "image/jpeg"];
+    if (e.dataTransfer.files && e.dataTransfer.files[0] && imageTypes.includes(e.dataTransfer.files[0].type)) {
+      this.props.onUploadImage(URL.createObjectURL(e.dataTransfer.files[0]));
     }
   }
 
   handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
-      console.log(e.target.files)
+      this.props.onUploadImage(URL.createObjectURL(e.target.files[0]));
     }
   }
 

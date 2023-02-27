@@ -113,6 +113,7 @@ impl SvdResult {
 #[wasm_bindgen]
 pub fn svd(a_data: &[f32], nrows: usize, ncols: usize) -> SvdResult {
     let a = DMatrix::from_column_slice(nrows, ncols, a_data);
+
     // console::time_with_label("computation of SVD");
     let svd = a.svd(true, true);
     // console::time_end_with_label("computation of SVD");

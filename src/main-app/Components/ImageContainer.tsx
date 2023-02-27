@@ -103,7 +103,7 @@ export class ImageContainer extends React.Component<ImageContainerProps, ImageCo
 
     if (origSrc === null) {
       main = (
-        <DragDropUpload onUploadImage={onUploadImage.bind(this)} />
+        <DragDropUpload imgType={imgType} onUploadImage={onUploadImage.bind(this)} />
       );
     } else {
       main = (

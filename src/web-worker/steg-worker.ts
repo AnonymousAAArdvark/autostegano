@@ -23,7 +23,7 @@ function encode(
       const hh = lhs.red.length / hr;
       const hw = rhs.red.length / hr;
 
-      if ((cw * ch * 3 * maxLsb) / 8 < (hw + hh) * hr * 3 * 2 + 48) {
+      if ((cw * ch * 3 * maxLsb) / 8 < (hw + hh) * hr * 3 * 2 + 6) {
         postMessage(
           makeEncodedRes(
             new Uint8ClampedArray(),

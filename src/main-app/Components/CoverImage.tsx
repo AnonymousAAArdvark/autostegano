@@ -1,6 +1,5 @@
 import * as React from "react";
 import { getImageData, loadImage } from "../image-functions";
-import { FileInputField } from "./FileInputField";
 import { StegView } from "../CanvasView/StegView";
 import { StegComputationManager, StegInfo } from "../ComputationManager/stegComputationManager";
 import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
@@ -13,6 +12,8 @@ import { rgbMap } from "../rgb";
 import styles from "../Styles/Image.module.css";
 
 function arrToSrc(data: Uint8ClampedArray, width: number, height: number) {
+  console.log(data)
+  console.log(width, height)
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -207,7 +208,17 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     const h = Math.trunc(height * scale);
 
     let mainImageView: JSX.Element;
-    if (img && stegState && resizeState && resizeState.status === ResizeStatus.COMPUTED) {
+    if (img && stegState && resizeState && resizeState.status === ResizeStatus.COMPUTED && stegState.data.length === 0) {
+      mainImageView = (
+        <ImageContainer
+          origSrc={img}
+          src={resizeState.sImg.src}
+          imgType={"cover"}
+          computingMsg={"Adjust the settings so that the hidden image data fits into the cover image!"}
+          onUploadImage={this.loadImage.bind(this)}
+        />
+      );
+    } else if (img && stegState && resizeState && resizeState.status === ResizeStatus.COMPUTED) {
       mainImageView = (
         <ImageContainer
           origSrc={img}

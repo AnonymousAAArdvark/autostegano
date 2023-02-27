@@ -199,35 +199,63 @@ export class App extends React.Component<AppProps, AppState> {
         {/*<div className={styles.download_container}>*/}
         {/*  <button className={styles.download_btn}>Download Encoded Cover Image</button>*/}
         {/*</div>*/}
-        <div className={styles.hidden_image_container}>
-          <HiddenImage
-            hiddenWidth={this.state.hiddenWidth}
-            hiddenHeight={this.state.hiddenHeight}
-            onUpdateHiddenDimensions={this.onUpdateHiddenDimensions.bind(this)}
-            hiddenScale={this.state.hiddenScale}
-            onUpdateHiddenScale={this.onUpdateHiddenScale.bind(this)}
-            rawNumSvs={this.state.rawNumSvs}
-            numSvs={this.state.numSvs}
-            onUpdateNumSvs={this.onUpdateNumSvs.bind(this)}
-            autoHiddenScale={this.autoHiddenScale.bind(this)}
-            autoNumSvs={this.autoNumSvs.bind(this)}
-            svdState={this.state.svdState}
-            onUpdateSvdState={this.onUpdateSvdState.bind(this)}
-          />
+        <Navbar/>
+        <div className={styles.header_container}>
+          <div className={styles.section_label_container}>
+            <h2 className={styles.section_label}>Hidden Image</h2>
+          </div>
+          <div className={styles.group_btn_container}>
+            <div className={styles.group_btn}>
+              <input type={"radio"} id={"encode"} name={"mode"} value={"encode"} checked={this.state.mode === "encode"} onChange={this.handleModeChange.bind(this)}/>
+              <label className={styles.mode_btn} htmlFor={"encode"}>Encode</label>
+              <input type={"radio"} id={"decode"} name={"mode"} value={"decode"} checked={this.state.mode === "decode"} onChange={this.handleModeChange.bind(this)}/>
+              <label className={styles.mode_btn} htmlFor={"decode"}>Decode</label>
+            </div>
+          </div>
+          <div className={styles.section_label_container}>
+            <h2 className={styles.section_label}>Cover Image</h2>
+          </div>
         </div>
-        <CoverImage
-          coverWidth={this.state.coverWidth}
-          coverHeight={this.state.coverHeight}
-          onUpdateCoverDimensions={this.onUpdateCoverDimensions.bind(this)}
-          coverScale={this.state.coverScale}
-          onUpdateCoverScale={this.onUpdateCoverScale.bind(this)}
-          maxLsb={this.state.maxLsb}
-          onUpdateMaxLsb={this.onUpdateMaxLsb.bind(this)}
-          autoCoverScale={this.autoCoverScale.bind(this)}
-          autoMaxLsb={this.autoMaxLsb.bind(this)}
-          numSvs={this.state.numSvs}
-          svdState={this.state.svdState}
-        />
+        <div className={styles.main}>
+          <div className={styles.hidden_image_container}>
+            <HiddenImage
+              hiddenWidth={this.state.hiddenWidth}
+              hiddenHeight={this.state.hiddenHeight}
+              onUpdateHiddenDimensions={this.onUpdateHiddenDimensions.bind(this)}
+              hiddenScale={this.state.hiddenScale}
+              onUpdateHiddenScale={this.onUpdateHiddenScale.bind(this)}
+              rawNumSvs={this.state.rawNumSvs}
+              numSvs={this.state.numSvs}
+              onUpdateNumSvs={this.onUpdateNumSvs.bind(this)}
+              autoHiddenScale={this.autoHiddenScale.bind(this)}
+              autoNumSvs={this.autoNumSvs.bind(this)}
+              svdState={this.state.svdState}
+              onUpdateSvdState={this.onUpdateSvdState.bind(this)}
+            />
+          </div>
+          <div className={styles.info_container}>
+            <div className={styles.ratio_container}>
+              <h2 className={styles.top_ratio}>12,344</h2>
+              <h2 className={styles.bottom_ratio}>32,445</h2>
+            </div>
+            <VscChevronRight className={`${styles.status_arrow} ${this.state.mode === "encode" ? "" : styles.rotate}`}/>
+          </div>
+          <div className={styles.cover_image_container}>
+            <CoverImage
+              coverWidth={this.state.coverWidth}
+              coverHeight={this.state.coverHeight}
+              onUpdateCoverDimensions={this.onUpdateCoverDimensions.bind(this)}
+              coverScale={this.state.coverScale}
+              onUpdateCoverScale={this.onUpdateCoverScale.bind(this)}
+              maxLsb={this.state.maxLsb}
+              onUpdateMaxLsb={this.onUpdateMaxLsb.bind(this)}
+              autoCoverScale={this.autoCoverScale.bind(this)}
+              autoMaxLsb={this.autoMaxLsb.bind(this)}
+              numSvs={this.state.numSvs}
+              svdState={this.state.svdState}
+            />
+          </div>
+        </div>
       </div>
     );
   }

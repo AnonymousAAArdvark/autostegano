@@ -12,6 +12,11 @@
     justify-content: space-between;
 }
 
+.hidden_image_container {
+    padding: 0 5px 10px 30px;
+    width: 100%;
+}
+
 .info_container {
     display: flex;
     margin-top: 55px;

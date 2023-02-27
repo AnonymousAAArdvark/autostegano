@@ -250,9 +250,9 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
         { mainImageView }
         <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
           <p className={styles.calc}>
-            [{w}(width) + {h}(height)] * {numSvs}(rank) * 3(channels) * 2(bytes/float32) + 48(bytes
+            [{w}(width) + {h}(height)] * {numSvs}(rank) * 3(channels) * 2(bytes/float32) + 6(bytes
             of metadata) =
-            <span className={styles.calc_result}> {(w + h) * numSvs * 3 * 2 + 48} bits</span>
+            <span className={styles.calc_result}> {(w + h) * numSvs * 3 * 2 + 6} bytes</span>
           </p>
         </div>
         <div className={styles.options_container}>

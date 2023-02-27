@@ -7,6 +7,7 @@ interface DragDropUploadState {
 }
 
 export interface DragDropUploadProps {
+  imgType: string;
   onUploadImage: (src: string) => void;
 }
 
@@ -47,6 +48,7 @@ export class DragDropUpload extends React.Component<DragDropUploadProps, DragDro
 
   render(): JSX.Element {
     const { dragActive } = this.state;
+    const { imgType } = this.props;
     return (
       <form
         onDragEnter={(e) => this.handleDrag(e)}
@@ -54,7 +56,7 @@ export class DragDropUpload extends React.Component<DragDropUploadProps, DragDro
         className={styles.form_image_upload}
       >
         <input
-          id={"input-image-upload"}
+          id={`input-${ imgType }-image-upload`}
           type={"file"}
           accept={"image/jpeg, image/png"}
           multiple={false}
@@ -62,7 +64,7 @@ export class DragDropUpload extends React.Component<DragDropUploadProps, DragDro
           className={styles.input_image_upload}
         />
         <label
-          htmlFor={"input-image-upload"}
+          htmlFor={`input-${ imgType }-image-upload`}
           className={`${styles.label_image_upload} ${dragActive ? styles.drag_active : ""}`}
         >
           <div>

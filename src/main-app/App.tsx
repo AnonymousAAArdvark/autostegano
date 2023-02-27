@@ -18,6 +18,7 @@ interface AppState {
   coverHeight: number;
   hiddenScale: number;
   coverScale: number;
+  rawNumSvs: number;
   numSvs: number;
   maxLsb: number;
   svdState: SvdState;
@@ -36,7 +37,8 @@ export class App extends React.Component<AppProps, AppState> {
       coverHeight: 0,
       hiddenScale: 1,
       coverScale: 1,
-      numSvs: 1,
+      rawNumSvs: 0,
+      numSvs: 0,
       maxLsb: 1,
       svdState: { status: SvdStatus.CURRENTLY_COMPUTING },
       mode: "encode",
@@ -63,8 +65,8 @@ export class App extends React.Component<AppProps, AppState> {
     this.setState( {coverScale });
   }
 
-  onUpdateNumSvs(numSvs: number): void {
-    this.setState({ numSvs });
+  onUpdateNumSvs(rawNumSvs: number): void {
+    this.setState({ rawNumSvs, numSvs: Math.ceil(rawNumSvs) });
   }
 
   onUpdateSvdState(svdState: SvdState): void {
@@ -197,19 +199,22 @@ export class App extends React.Component<AppProps, AppState> {
         {/*<div className={styles.download_container}>*/}
         {/*  <button className={styles.download_btn}>Download Encoded Cover Image</button>*/}
         {/*</div>*/}
-        <HiddenImage
-          hiddenWidth={this.state.hiddenWidth}
-          hiddenHeight={this.state.hiddenHeight}
-          onUpdateHiddenDimensions={this.onUpdateHiddenDimensions.bind(this)}
-          hiddenScale={this.state.hiddenScale}
-          onUpdateHiddenScale={this.onUpdateHiddenScale.bind(this)}
-          numSvs={this.state.numSvs}
-          onUpdateNumSvs={this.onUpdateNumSvs.bind(this)}
-          autoHiddenScale={this.autoHiddenScale.bind(this)}
-          autoNumSvs={this.autoNumSvs.bind(this)}
-          svdState={this.state.svdState}
-          onUpdateSvdState={this.onUpdateSvdState.bind(this)}
-        />
+        <div className={styles.hidden_image_container}>
+          <HiddenImage
+            hiddenWidth={this.state.hiddenWidth}
+            hiddenHeight={this.state.hiddenHeight}
+            onUpdateHiddenDimensions={this.onUpdateHiddenDimensions.bind(this)}
+            hiddenScale={this.state.hiddenScale}
+            onUpdateHiddenScale={this.onUpdateHiddenScale.bind(this)}
+            rawNumSvs={this.state.rawNumSvs}
+            numSvs={this.state.numSvs}
+            onUpdateNumSvs={this.onUpdateNumSvs.bind(this)}
+            autoHiddenScale={this.autoHiddenScale.bind(this)}
+            autoNumSvs={this.autoNumSvs.bind(this)}
+            svdState={this.state.svdState}
+            onUpdateSvdState={this.onUpdateSvdState.bind(this)}
+          />
+        </div>
         <CoverImage
           coverWidth={this.state.coverWidth}
           coverHeight={this.state.coverHeight}

@@ -4,6 +4,7 @@
     "moduleResolution": "node",
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "lib": ["DOM", "ES2015", "ScriptHost"],
+    "jsx": "react"
   },
   "references": [
     {

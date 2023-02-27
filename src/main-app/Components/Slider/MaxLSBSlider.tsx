@@ -9,6 +9,7 @@ interface MaxLSBSliderState {
 export interface MaxLSBSliderProps {
   value: number,
   onChange: (value: number) => void;
+  onAuto: () => number;
 }
 
 export class MaxLSBSlider extends React.Component<MaxLSBSliderProps, MaxLSBSliderState> {

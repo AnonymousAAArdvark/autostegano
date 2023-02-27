@@ -1,0 +1,26 @@
+.calc_container {
+    width: 100%;
+    display: flex;
+    /*margin: 0;*/
+}
+
+.calc_container_left {
+    justify-content: flex-end;
+}
+
+.calc {
+    font-size: 18px;
+    margin: 15px 0;
+}
+
+.calc_result {
+    font-weight: bold;
+    color: #00a700;
+}
+
+.options_container {
+    background-color: #fbfbfb;
+    padding: 10px 15px 15px 15px;
+    border-radius: 5px;
+    border: 2px solid #e6e6e6;
+}

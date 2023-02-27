@@ -16,10 +16,10 @@
     aspect-ratio: inherit;
     object-fit: contain;
     margin: auto;
+    box-shadow: 0 2px 8px #999999;
 }
 
 .figure_active {
-    box-shadow: 0 2px 8px #999999;
     cursor: pointer;
     transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
 }

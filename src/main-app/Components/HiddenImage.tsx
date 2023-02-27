@@ -1,21 +1,26 @@
 import * as React from "react";
-import {getImageData, imageDataToPixels, loadImage} from "../image-functions";
-import {SvdApproximation} from "../CanvasView/SvdApproximation";
-import {SvdComputationManager} from "../ComputationManager/svdComputationManager";
-import {ResizeComputationManager} from "../ComputationManager/resizeComputationManager";
-import {ImageContainer} from "./ImageContainer";
-import {ResizeSlider} from "./Slider/ResizeSlider";
-import {SingularValuesSlider} from "./Slider/SingularValuesSlider";
-import {SvdState, SvdStatus} from "../svdstate";
-import {ResizeState, ResizeStatus} from "../resizestate";
-import {RGB} from "../rgb";
+import { getImageData, imageDataToPixels, loadImage } from "../image-functions";
+import { SvdApproximation } from "../CanvasView/SvdApproximation";
+import { SvdComputationManager } from "../ComputationManager/svdComputationManager";
+import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
+import { ImageContainer } from "./ImageContainer";
+import { ResizeSlider } from "./Slider/ResizeSlider";
+import { SingularValuesSlider } from "./Slider/SingularValuesSlider";
+import { SvdState, SvdStatus } from "../svdstate";
+import { ResizeState, ResizeStatus } from "../resizestate";
+import { RGB } from "../rgb";
+import styles from "../Styles/Image.module.css";
 
-function RGBtoSrc(rgbArray: RGB<[Uint8ClampedArray, Uint16Array, Uint16Array]>, width: number, height: number) {
-  const canvas = document.createElement('canvas');
+function RgbToSrc(
+  rgbArray: RGB<[Uint8ClampedArray, Uint16Array, Uint16Array]>,
+  width: number,
+  height: number,
+) {
+  const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
 
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
   const imageData = ctx.createImageData(width, height);
 
   const { red, green, blue } = rgbArray;
@@ -48,6 +53,7 @@ export interface HiddenImageProps {
   onUpdateHiddenDimensions: (hiddenWidth: number, hiddenHeight: number) => void;
   hiddenScale: number;
   onUpdateHiddenScale: (hiddenScale: number) => void;
+  rawNumSvs: number;
   numSvs: number;
   onUpdateNumSvs: (numSvs: number) => void;
   autoHiddenScale: () => number;
@@ -84,9 +90,6 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     this.onAutoScale = this.onAutoScale.bind(this);
   }
 
-  componentDidMount(): void {
-  }
-
   initializeImage(img: HTMLImageElement): void {
     const { width, height } = img;
 
@@ -117,7 +120,9 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
       resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
       img,
     } as HiddenImageState);
-    this.svdComputationManager.computeSvd(height, width, pxls, this.props.numSvs);
+    const numSvs = Math.min(img.width, img.height);
+    this.onUpdateSvs(numSvs);
+    this.svdComputationManager.computeSvd(height, width, pxls, numSvs);
   }
 
   updateScaledImage(scale: number): void {
@@ -127,7 +132,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     if ((width * scale > 2000 || height * scale > 2000) && this.state.warnSize) {
       const msg = "Your image will be quite large. Computing the SVD may take a while. Continue?";
       if (!window.confirm(msg)) {
-        this.props.onUpdateHiddenScale(this.props.hiddenScale)
+        this.props.onUpdateHiddenScale(this.props.hiddenScale);
         return;
       }
       this.setState({ warnSize: false });
@@ -173,7 +178,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
   }
 
   onUpdateSvs(numSvs: number): void {
-    this.svdComputationManager.setRank(numSvs);
+    this.svdComputationManager.setRank(Math.ceil(numSvs));
     this.props.onUpdateNumSvs(numSvs);
   }
 
@@ -188,7 +193,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
   }
 
   render(): JSX.Element {
-    const { numSvs } = this.props;
+    const { numSvs, rawNumSvs, autoNumSvs, autoHiddenScale } = this.props;
     const { img, resizeState } = this.state;
     const { hiddenScale: scale, hiddenWidth: width, hiddenHeight: height, svdState } = this.props;
     const w = Math.trunc(width * scale);
@@ -196,13 +201,19 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
 
     let mainImageView: JSX.Element;
     if (
-      img && svdState.status === SvdStatus.COMPUTED &&
-      svdState.lowRankApproximation !== undefined && resizeState
+      img &&
+      svdState.status === SvdStatus.COMPUTED &&
+      svdState.lowRankApproximation !== undefined &&
+      resizeState
     ) {
       mainImageView = (
         <ImageContainer
           origSrc={img}
-          src={RGBtoSrc(svdState.lowRankApproximation, resizeState.sImg.width, resizeState.sImg.height)}
+          src={RgbToSrc(
+            svdState.lowRankApproximation,
+            resizeState.sImg.width,
+            resizeState.sImg.height,
+          )}
           imgType={"hidden"}
           computingMsg={""}
           onUploadImage={this.loadImage.bind(this)}
@@ -214,8 +225,11 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
           origSrc={img}
           src={resizeState.sImg.src}
           imgType={"hidden"}
-          computingMsg={resizeState.status === ResizeStatus.CURRENTLY_COMPUTING ?
-            "Computing Resize..." : "Computing SVD..."}
+          computingMsg={
+            resizeState.status === ResizeStatus.CURRENTLY_COMPUTING
+              ? "Computing Resize..."
+              : "Computing SVD..."
+          }
           onUploadImage={this.loadImage.bind(this)}
         />
       );
@@ -234,12 +248,27 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     return (
       <div>
         { mainImageView }
-        <SingularValuesSlider
-          value={numSvs}
-          max={Math.min(w, h)}
-          onChange={this.onUpdateSvs.bind(this)}
-        />
-        <ResizeSlider imageType={"Hidden"} value={scale} onChange={this.onUpdateScale.bind(this)} />
+        <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
+          <p className={styles.calc}>
+            [{w}(width) + {h}(height)] * {numSvs}(rank) * 3(channels) * 2(bytes/float32) + 48(bytes
+            of metadata) =
+            <span className={styles.calc_result}> {(w + h) * numSvs * 3 * 2 + 48} bits</span>
+          </p>
+        </div>
+        <div className={styles.options_container}>
+          <SingularValuesSlider
+            value={rawNumSvs}
+            max={Math.min(w, h)}
+            onChange={this.onUpdateSvs.bind(this)}
+            onAuto={autoNumSvs}
+          />
+          <ResizeSlider
+            imageType={"Hidden"}
+            value={scale}
+            onChange={this.onUpdateScale.bind(this)}
+            onAuto={autoHiddenScale}
+          />
+        </div>
       </div>
     );
   }

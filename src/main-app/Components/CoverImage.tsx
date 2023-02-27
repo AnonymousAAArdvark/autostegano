@@ -3,44 +3,32 @@ import { getImageData, loadImage } from "../image-functions";
 import { FileInputField } from "./FileInputField";
 import { StegView } from "../CanvasView/StegView";
 import { StegComputationManager, StegInfo } from "../ComputationManager/stegComputationManager";
+import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
+import { ImageContainer } from "./ImageContainer";
 import { MaxLSBSlider } from "./Slider/MaxLSBSlider";
 import { ResizeSlider } from "./Slider/ResizeSlider";
 import { SvdState, SvdStatus } from "../svdstate";
 import { ResizeState, ResizeStatus } from "../resizestate";
 import { rgbMap } from "../rgb";
-import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
+import styles from "../Styles/Image.module.css";
 
-const firstImg = {
-  w: 600,
-  h: 402,
-  src: "example-images/mountains_sea.jpg",
-  approxSrc: "example-images/mountains_sea_5svs.jpg",
-};
+function arrToSrc(data: Uint8ClampedArray, width: number, height: number) {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
 
-type Indexable<V> = {
-  [key: number]: V;
-  length: number;
-};
+  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+  const imageData = new ImageData(data, width, height);
+  ctx.putImageData(imageData, 0, 0);
 
-function contains<V, L extends Indexable<V>>(list: L, el: V): boolean {
-  for (let i = 0; i < list.length; i++) {
-    if (list[i] === el) {
-      return true;
-    }
-  }
-  return false;
+  return canvas.toDataURL();
 }
 
 interface CoverImageState {
-  placeholderImg: null | string;
-  error: string;
-  resizeState: ResizeState;
-  hoverToSeeOriginal: boolean;
-  guessingPage: boolean;
-  hover: boolean;
+  resizeState: null | ResizeState;
+  stegState: null | StegInfo;
   warnSize: boolean;
   img: null | HTMLImageElement;
-  stegState: null | StegInfo;
 }
 
 export interface CoverImageProps {
@@ -65,27 +53,20 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
   constructor(props: CoverImageProps) {
     super(props);
     this.state = {
-      placeholderImg: firstImg.approxSrc,
-      error: "",
-      resizeState: { status: ResizeStatus.CURRENTLY_COMPUTING },
-      hoverToSeeOriginal: true,
-      guessingPage: false,
-      hover: false,
+      resizeState: null,
       warnSize: true,
       img: null,
       stegState: null,
     };
-    this.props.onUpdateMaxLsb(4);
-    this.props.onUpdateCoverDimensions(firstImg.w, firstImg.h);
 
     this.stegViewRef = React.createRef();
     this.stegComputationManager = new StegComputationManager((stegResult) => {
       this.setState({ stegState: stegResult });
-      if (stegResult.mode == "encdode") {
-        this.stegComputationManager.computeDecode(
-          new ImageData(stegResult.data, stegResult.width, stegResult.height),
-        );
-      }
+      // if (stegResult.mode == "encode") {
+      //   this.stegComputationManager.computeDecode(
+      //     new ImageData(stegResult.data, stegResult.width, stegResult.height),
+      //   );
+      // }
     });
 
     this.resizeComputationManager = new ResizeComputationManager((url) => {
@@ -96,14 +77,9 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     this.onAutoMaxLsb = this.onAutoMaxLsb.bind(this);
   }
 
-  componentDidMount(): void {
-    window.ondragover = this.onDragOver.bind(this);
-    this.loadImage(firstImg.src, firstImg.approxSrc);
-  }
-
   componentDidUpdate(prevProps: CoverImageProps): void {
     if (
-      prevProps.svdState !== this.props.svdState &&
+      prevProps.svdState !== this.props.svdState && this.state.resizeState &&
       this.state.resizeState.status === ResizeStatus.COMPUTED
     ) {
       this.computeEncode(getImageData(this.state.resizeState.sImg), this.props.maxLsb);
@@ -138,7 +114,6 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     this.setState({
       resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
       img,
-      error: "",
     } as CoverImageState);
     this.computeEncode(imageData, this.props.maxLsb);
   }
@@ -157,6 +132,9 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     }
 
     this.props.onUpdateCoverScale(scale);
+    this.setState({
+      resizeState: { ...this.state.resizeState, status: ResizeStatus.CURRENTLY_COMPUTING },
+    } as CoverImageState);
     this.resizeComputationManager.computeResize(ImageData, scale);
   }
 
@@ -174,8 +152,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     };
   }
 
-  loadImage(url: string, placeholderImg: null | string = null): void {
-    this.setState({ placeholderImg } as CoverImageState);
+  loadImage(url: string): void {
     loadImage(url, this.initializeImage.bind(this));
   }
 
@@ -197,57 +174,12 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     }
   }
 
-  onDragOver(evt: React.DragEvent<HTMLElement> | DragEvent): void {
-    // without this, the drop event would not fire on the element!
-    evt.preventDefault();
-
-    if (!this.state.hover && evt.dataTransfer !== null) {
-      const types = evt.dataTransfer.types;
-      const error =
-        contains(types, "text/uri-list") || contains(types, "Files")
-          ? ""
-          : "The dragged object is not an image!";
-      this.setState({ hover: true, error } as CoverImageState);
-    }
-  }
-
-  onDragLeave(): void {
-    this.setState({ hover: false, error: "" } as CoverImageState);
-  }
-
-  onDrop(evt: React.DragEvent<HTMLElement>): void {
-    this.setState({ hover: false } as CoverImageState);
-    evt.preventDefault();
-
-    const files = evt.dataTransfer.files;
-    if (files && files.length > 0) {
-      this.onFileChosen(files[0]);
-    } else if (contains(evt.dataTransfer.types, "text/uri-list")) {
-      this.loadImage(evt.dataTransfer.getData("text/uri-list"));
-    }
-  }
-
-  onFileChosen(file: File): void {
-    if (!file.type.match(/^image\/.*/)) {
-      const error = "The chosen file is not an image! Try another file ...";
-      this.setState({ error } as CoverImageState);
-      return;
-    }
-    this.setState({ error: "" } as CoverImageState);
-    const reader = new FileReader();
-    reader.onload = (evt: Event): void => {
-      const target = evt.target as EventTarget & { result: string };
-      this.loadImage(target.result);
-    };
-    reader.readAsDataURL(file);
-  }
-
   onUpdateScale(scale: number): void {
     this.updateScaledImage(scale);
   }
 
   onUpdateMaxLSB(maxLsb: number): void {
-    if (this.state.resizeState.status === ResizeStatus.COMPUTED) {
+    if (this.state.resizeState && this.state.resizeState.status === ResizeStatus.COMPUTED) {
       const scaledImageData = getImageData(this.state.resizeState.sImg as HTMLImageElement);
       this.computeEncode(scaledImageData, maxLsb);
     }
@@ -260,7 +192,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
 
   onAutoMaxLsb(): void {
     const maxLsb = this.props.autoMaxLsb();
-    if (this.state.resizeState.status === ResizeStatus.COMPUTED) {
+    if (this.state.resizeState && this.state.resizeState.status === ResizeStatus.COMPUTED) {
       const scaledImageData = getImageData(this.state.resizeState.sImg as HTMLImageElement);
       this.computeEncode(scaledImageData, maxLsb);
     }
@@ -268,74 +200,67 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
   }
 
   render(): JSX.Element {
-    const { img, resizeState, placeholderImg } = this.state;
-    const { coverScale: scale, coverWidth: width, coverHeight: height, maxLsb } = this.props;
+    const { maxLsb, autoMaxLsb, autoCoverScale } = this.props;
+    const { img, resizeState, stegState } = this.state;
+    const { coverScale: scale, coverWidth: width, coverHeight: height } = this.props;
     const w = Math.trunc(width * scale);
     const h = Math.trunc(height * scale);
 
-    let infoBar: null | string | JSX.Element = null;
-    if (this.state.error) {
-      infoBar = this.state.error;
-    } else if (this.state.hover) {
-      infoBar = "Drop now!";
-    }
-
-    const dropTarget = (
-      <div
-        className={"drop-target " + (this.state.error ? "" : "active")}
-        onDragOver={this.onDragOver.bind(this)}
-        onDragLeave={this.onDragLeave.bind(this)}
-        onDrop={this.onDrop.bind(this)}
-      />
-    );
-
-    let mainImageView: null | React.Component | JSX.Element = null;
-    if (this.state.stegState && resizeState.status === ResizeStatus.COMPUTED && img) {
+    let mainImageView: JSX.Element;
+    if (img && stegState && resizeState && resizeState.status === ResizeStatus.COMPUTED) {
       mainImageView = (
-        <StegView
-          ref={this.stegViewRef}
-          stegResult={this.state.stegState.data}
-          width={w}
-          height={h}
-          img={img}
-          hoverToSeeOriginal={this.state.hoverToSeeOriginal}
+        <ImageContainer
+          origSrc={img}
+          src={arrToSrc(stegState.data, w, h)}
+          imgType={"cover"}
+          computingMsg={""}
+          onUploadImage={this.loadImage.bind(this)}
+        />
+      );
+    } else if (img && resizeState) {
+      mainImageView = (
+        <ImageContainer
+          origSrc={img}
+          src={resizeState.sImg.src}
+          imgType={"cover"}
+          computingMsg={resizeState.status === ResizeStatus.CURRENTLY_COMPUTING ?
+            "Computing Resize..." : "Computing Steg..."}
+          onUploadImage={this.loadImage.bind(this)}
         />
       );
     } else {
-      // the SVDs have not been computed yet
-      if (placeholderImg) {
-        mainImageView = <img src={placeholderImg} />;
-      } else if (resizeState.status === ResizeStatus.COMPUTED) {
-        mainImageView = <img src={resizeState.sImg.src} />;
-      } else if (img) {
-        mainImageView = <img src={img.src} />;
-      }
+      mainImageView = (
+        <ImageContainer
+          origSrc={null}
+          src={""}
+          imgType={"cover"}
+          computingMsg={""}
+          onUploadImage={this.loadImage.bind(this)}
+        />
+      );
     }
 
     return (
       <div>
-        {this.state.hover ? dropTarget : ""}
-        <div className="image-container">
-          <div className="main-image-container">{mainImageView ? mainImageView : ""}</div>
-          {infoBar ? <p className="info-bar">{infoBar}</p> : ""}
+        { mainImageView }
+        <div className={`${styles.calc_container}`}>
+          <p className={styles.calc}>
+            <span className={styles.calc_result}>29455 bits </span>
+            = 643(width) * 439(height) * 3(channels)
+          </p>
         </div>
-        <div className="wrapper">
-          <div className="options">
-            <MaxLSBSlider value={maxLsb} onChange={this.onUpdateMaxLSB.bind(this)} />
-          </div>
-          <div className="options">
-            <ResizeSlider imageType={"Cover"} value={scale} onChange={this.onUpdateScale.bind(this)} />
-          </div>
-          <button onClick={this.onAutoScale}>Auto Scale</button>
-          <button onClick={this.onAutoMaxLsb}>Auto MaxLsb</button>
-          <p>
-            {"Change the number of singular values using the slider. Click on one of these images to compress it:"}
-          </p>
-          <p>
-            <span className="valign">You can compress your own images by using the</span>
-            <FileInputField onChange={this.onFileChosen.bind(this)} label="file picker" />
-            <span className="valign">or by dropping them on this page.</span>
-          </p>
+        <div className={styles.options_container}>
+          <MaxLSBSlider
+            value={maxLsb}
+            onChange={this.onUpdateMaxLSB.bind(this)}
+            onAuto={autoMaxLsb}
+          />
+          <ResizeSlider
+            imageType={"Cover"}
+            value={scale}
+            onChange={this.onUpdateScale.bind(this)}
+            onAuto={autoCoverScale}
+          />
         </div>
       </div>
     );

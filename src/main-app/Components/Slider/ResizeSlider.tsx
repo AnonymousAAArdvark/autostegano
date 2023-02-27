@@ -10,6 +10,7 @@ export interface ResizeSliderProps {
   imageType: string,
   value: number,
   onChange: (value: number) => void;
+  onAuto: () => void;
 }
 
 export class ResizeSlider extends React.Component<ResizeSliderProps, ResizeSliderState> {
@@ -40,13 +41,13 @@ export class ResizeSlider extends React.Component<ResizeSliderProps, ResizeSlide
   }
 
   render(): JSX.Element {
-    const { imageType, value } = this.props;
+    const { imageType, value, onAuto } = this.props;
 
     return (
       <div>
         <div className={styles.slider_label_container}>
           <p className={styles.slider_label}>{ imageType } Image Scale: { value }x</p>
-          <button className={`${styles.auto_button}`}>Auto</button>
+          <button onClick={onAuto} className={`${styles.auto_button}`}>Auto</button>
         </div>
         <Slider
           value={this.toIndex(value)}

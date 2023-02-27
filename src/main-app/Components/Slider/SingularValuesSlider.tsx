@@ -10,6 +10,7 @@ export interface SingularValuesSliderProps {
   value: number,
   max: number,
   onChange: (value: number) => void;
+  onAuto: () => void;
 }
 
 export class SingularValuesSlider extends React.Component<SingularValuesSliderProps, SingularValuesSliderState> {
@@ -40,13 +41,13 @@ export class SingularValuesSlider extends React.Component<SingularValuesSliderPr
   }
 
   render(): JSX.Element {
-    const { value, max } = this.props;
+    const { value, max, onAuto } = this.props;
 
     return (
       <div>
         <div className={styles.slider_label_container}>
           <p className={styles.slider_label}>Number of Singular Values: { Math.ceil(value) }</p>
-          <button className={`${styles.auto_button}`}>Auto</button>
+          <button onClick={onAuto} className={`${styles.auto_button}`}>Auto</button>
         </div>
         <Slider
           value={this.toIndex(value)}

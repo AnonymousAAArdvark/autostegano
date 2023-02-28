@@ -117,7 +117,14 @@
 .status_arrow {
     transition: transform .2s ease-in-out;
     font-size: 10vw;
+}
+
+.green {
     color: #00a700;
+}
+
+.red {
+    color: #e50000;
 }
 
 .rotate {

@@ -79,22 +79,19 @@ export class App extends React.Component<AppProps, AppState> {
 
   getCoverSize(): number {
     const { coverWidth, coverHeight, coverScale, maxLsb } = this.state;
-    return Math.trunc(coverWidth * coverScale)
-      * Math.trunc(coverHeight * coverScale) * 3 * maxLsb / 8;
+    return Math.trunc(coverWidth * coverScale * coverHeight * coverScale * 3 * maxLsb / 8);
   }
 
   getHiddenSize(): number {
     const { hiddenWidth, hiddenHeight, hiddenScale, numSvs } = this.state;
-    return (Math.trunc(hiddenWidth * hiddenScale)
-      + Math.trunc(hiddenHeight * hiddenScale))
-      * numSvs * 3 * 2 + 48;
+    return Math.trunc((hiddenWidth + hiddenHeight) * hiddenScale) * numSvs * 3 * 2 + (hiddenWidth ? 6 : 0);
   }
 
   autoHiddenScale(): number {
     const { numSvs, hiddenWidth, hiddenHeight } = this.state;
-    let reqScale = (this.getCoverSize() - 48) / (3 * 2 * numSvs * (hiddenWidth + hiddenHeight));
+    let reqScale = (this.getCoverSize() - 6) / (3 * 2 * numSvs * (hiddenWidth + hiddenHeight));
     if (reqScale * Math.min(hiddenWidth, hiddenHeight) < numSvs) {
-      reqScale = Math.sqrt((this.getCoverSize() - 48) / (3 * 2 * Math.min(hiddenWidth, hiddenHeight) * (hiddenWidth + hiddenHeight)));
+      reqScale = Math.sqrt((this.getCoverSize() - 6) / (3 * 2 * Math.min(hiddenWidth, hiddenHeight) * (hiddenWidth + hiddenHeight)));
     }
     if (reqScale < 1) {
       return this.clamp(Math.round(Math.floor(reqScale / .05) * .05 * 100) / 100, .2, 5);
@@ -115,7 +112,7 @@ export class App extends React.Component<AppProps, AppState> {
 
   autoNumSvs(): number {
     const { hiddenScale, hiddenWidth, hiddenHeight } = this.state;
-    const reqNumSvs = (this.getCoverSize() - 48) / (3 * 2 * hiddenScale * (hiddenWidth + hiddenHeight));
+    const reqNumSvs = (this.getCoverSize() - 6) / (3 * 2 * hiddenScale * (hiddenWidth + hiddenHeight));
     return this.clamp(Math.floor(reqNumSvs), 1, Math.min(hiddenWidth, hiddenHeight));
   }
 
@@ -132,6 +129,7 @@ export class App extends React.Component<AppProps, AppState> {
 
   render(): JSX.Element {
     const { maxLsb, numSvs, hiddenScale, coverScale } = this.state;
+
 
     return (
       <div>
@@ -231,14 +229,22 @@ export class App extends React.Component<AppProps, AppState> {
               autoNumSvs={this.autoNumSvs.bind(this)}
               svdState={this.state.svdState}
               onUpdateSvdState={this.onUpdateSvdState.bind(this)}
+              getCoverSize={this.getCoverSize.bind(this)}
+              getHiddenSize={this.getHiddenSize.bind(this)}
             />
           </div>
           <div className={styles.info_container}>
             <div className={styles.ratio_container}>
-              <h2 className={styles.top_ratio}>12,344</h2>
-              <h2 className={styles.bottom_ratio}>32,445</h2>
+              <h2 className={styles.top_ratio}>{this.getHiddenSize().toExponential(3)}</h2>
+              <h2 className={styles.bottom_ratio}>{this.getCoverSize().toExponential(3)}</h2>
             </div>
-            <VscChevronRight className={`${styles.status_arrow} ${this.state.mode === "encode" ? "" : styles.rotate}`}/>
+            <VscChevronRight
+              className={
+                `${styles.status_arrow} ` +
+                `${this.state.mode === "encode" ? "" : styles.rotate} ` +
+                `${this.getCoverSize() >= this.getHiddenSize() ? styles.green : styles.red} `
+              }
+            />
           </div>
           <div className={styles.cover_image_container}>
             <CoverImage
@@ -253,8 +259,13 @@ export class App extends React.Component<AppProps, AppState> {
               autoMaxLsb={this.autoMaxLsb.bind(this)}
               numSvs={this.state.numSvs}
               svdState={this.state.svdState}
+              getCoverSize={this.getCoverSize.bind(this)}
+              getHiddenSize={this.getHiddenSize.bind(this)}
             />
           </div>
+        </div>
+        <div className={styles.download_container}>
+          <button className={styles.download_btn}>Download Encoded Cover Image</button>
         </div>
       </div>
     );

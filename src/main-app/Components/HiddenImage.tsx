@@ -60,6 +60,8 @@ export interface HiddenImageProps {
   autoNumSvs: () => number;
   svdState: SvdState;
   onUpdateSvdState: (svdState: SvdState) => void;
+  getCoverSize: () => number;
+  getHiddenSize: () => number;
 }
 
 export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageState> {
@@ -123,7 +125,6 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     const numSvs = Math.min(img.width, img.height);
     this.onUpdateSvs(numSvs);
     this.svdComputationManager.computeSvd(height, width, pxls, numSvs);
-
   }
 
   updateScaledImage(scale: number): void {
@@ -131,6 +132,13 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     const ImageData = getImageData(this.state.img as HTMLImageElement);
 
     if ((width * scale > 2000 || height * scale > 2000) && this.state.warnSize) {
+      const handle = document.getElementsByClassName("rc-slider-handle")[3];
+      const mouseUpEvent = new MouseEvent("mouseup", {
+        bubbles: true,
+        cancelable: true,
+        button: 0,
+      });
+      handle.dispatchEvent(mouseUpEvent); // hacky
       const msg = "Your image will be quite large. Computing the SVD may take a while. Continue?";
       if (!window.confirm(msg)) {
         this.props.onUpdateHiddenScale(this.props.hiddenScale);
@@ -196,7 +204,15 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
   render(): JSX.Element {
     const { numSvs, rawNumSvs, autoNumSvs, autoHiddenScale } = this.props;
     const { img, resizeState } = this.state;
-    const { hiddenScale: scale, hiddenWidth: width, hiddenHeight: height, svdState } = this.props;
+    const {
+      hiddenScale: scale,
+      hiddenWidth: width,
+      hiddenHeight: height,
+      svdState,
+      getCoverSize,
+      getHiddenSize,
+    } = this.props;
+    const canEncode = getCoverSize() >= getHiddenSize();
     const w = Math.trunc(width * scale);
     const h = Math.trunc(height * scale);
 
@@ -248,13 +264,18 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
 
     return (
       <div>
-        { mainImageView }
+        {mainImageView}
         <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
           <p className={styles.calc}>
-            [{w}(width) + {h}(height)] * {numSvs}(rank) * 3(channels) * 2(bytes/float32) + 6(bytes
-            of metadata) =
-            <span className={styles.calc_result}> {(w + h) * numSvs * 3 * 2 + 6} bytes</span>
+            (<b>{w.toLocaleString()}</b> width + <b>{h.toLocaleString()}</b> height) * <b>{numSvs.toLocaleString()}</b>
+            {" "}rank * <b>3</b> channels * <b>2</b> bytes-per-float32 + <b>{width ? 6 : 0}</b> bytes of metadata
           </p>
+          <div className={styles.result_container}>
+            =
+            <span className={canEncode ? styles.green : styles.red}>
+              {" "}{getHiddenSize().toLocaleString()} bytes
+            </span>
+          </div>
         </div>
         <div className={styles.options_container}>
           <SingularValuesSlider

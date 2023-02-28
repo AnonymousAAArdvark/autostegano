@@ -1,19 +1,17 @@
 import * as React from "react";
-import { getImageData, loadImage } from "../image-functions";
-import { StegView } from "../CanvasView/StegView";
-import { StegComputationManager, StegInfo } from "../ComputationManager/stegComputationManager";
-import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
-import { ImageContainer } from "./ImageContainer";
-import { MaxLSBSlider } from "./Slider/MaxLSBSlider";
-import { ResizeSlider } from "./Slider/ResizeSlider";
-import { SvdState, SvdStatus } from "../svdstate";
-import { ResizeState, ResizeStatus } from "../resizestate";
-import { rgbMap } from "../rgb";
+import {getImageData, loadImage} from "../image-functions";
+import {StegView} from "../CanvasView/StegView";
+import {StegComputationManager, StegInfo} from "../ComputationManager/stegComputationManager";
+import {ResizeComputationManager} from "../ComputationManager/resizeComputationManager";
+import {ImageContainer} from "./ImageContainer";
+import {MaxLSBSlider} from "./Slider/MaxLSBSlider";
+import {ResizeSlider} from "./Slider/ResizeSlider";
+import {SvdState, SvdStatus} from "../svdstate";
+import {ResizeState, ResizeStatus} from "../resizestate";
+import {rgbMap} from "../rgb";
 import styles from "../Styles/Image.module.css";
 
 function arrToSrc(data: Uint8ClampedArray, width: number, height: number) {
-  console.log(data)
-  console.log(width, height)
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -80,8 +78,8 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
 
   componentDidUpdate(prevProps: CoverImageProps): void {
     if (
-      prevProps.svdState !== this.props.svdState && this.state.resizeState &&
-      this.state.resizeState.status === ResizeStatus.COMPUTED
+      prevProps.svdState !== this.props.svdState &&
+      this.state.resizeState && this.state.resizeState.status === ResizeStatus.COMPUTED
     ) {
       this.computeEncode(getImageData(this.state.resizeState.sImg), this.props.maxLsb);
     }
@@ -111,12 +109,19 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       this.setState({ warnSize: false });
     }
 
-    this.props.onUpdateCoverDimensions(width, height);
-    this.setState({
-      resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
-      img,
-    } as CoverImageState);
-    this.computeEncode(imageData, this.props.maxLsb);
+    this.setState({ img } as CoverImageState);
+    if (this.props.coverScale === 1) {
+      this.props.onUpdateCoverDimensions(width, height);
+      this.setState({
+        resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
+      } as CoverImageState);
+      this.computeEncode(imageData, this.props.maxLsb);
+    } else {
+      this.setState({
+        resizeState: null,
+      } as CoverImageState);
+      this.resizeComputationManager.computeResize(imageData, this.props.coverScale);
+    }
   }
 
   updateScaledImage(scale: number): void {
@@ -218,7 +223,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
           onUploadImage={this.loadImage.bind(this)}
         />
       );
-    } else if (img && stegState && resizeState && resizeState.status === ResizeStatus.COMPUTED) {
+    } else if (img && stegState && stegState.width === w && resizeState && resizeState.status === ResizeStatus.COMPUTED) {
       mainImageView = (
         <ImageContainer
           origSrc={img}
@@ -256,21 +261,21 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
         { mainImageView }
         <div className={`${styles.calc_container}`}>
           <p className={styles.calc}>
-            <span className={styles.calc_result}>29455 bits </span>
-            = 643(width) * 439(height) * 3(channels)
+            <span className={styles.calc_result}>{Math.floor((w * h * maxLsb * 3) / 8)} bytes </span>
+            = [{ w }(width) * { h }(height) * { maxLsb }(maximum bits encoded) * 3(channels)] / 8(bit/byte)
           </p>
         </div>
         <div className={styles.options_container}>
           <MaxLSBSlider
             value={maxLsb}
             onChange={this.onUpdateMaxLSB.bind(this)}
-            onAuto={autoMaxLsb}
+            onAuto={this.onAutoMaxLsb.bind(this)}
           />
           <ResizeSlider
             imageType={"Cover"}
             value={scale}
             onChange={this.onUpdateScale.bind(this)}
-            onAuto={autoCoverScale}
+            onAuto={this.onAutoScale.bind(this)}
           />
         </div>
       </div>

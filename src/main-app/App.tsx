@@ -97,9 +97,9 @@ export class App extends React.Component<AppProps, AppState> {
       reqScale = Math.sqrt((this.getCoverSize() - 48) / (3 * 2 * Math.min(hiddenWidth, hiddenHeight) * (hiddenWidth + hiddenHeight)));
     }
     if (reqScale < 1) {
-      return this.clamp(Math.floor(reqScale / .05) * .05, .2, 5);
+      return this.clamp(Math.round(Math.floor(reqScale / .05) * .05 * 100) / 100, .2, 5);
     } else {
-      return this.clamp(Math.floor(reqScale / .25) * .25, .2, 5);
+      return this.clamp(Math.round(Math.floor(reqScale / .25) * .25 * 100) / 100, .2, 5);
     }
   }
 
@@ -107,9 +107,9 @@ export class App extends React.Component<AppProps, AppState> {
     const { maxLsb, coverWidth, coverHeight } = this.state
     const reqScale = Math.sqrt(this.getHiddenSize() * 8 / (coverWidth * coverHeight * 3 * maxLsb));
     if (reqScale < 1) {
-      return this.clamp(Math.ceil(reqScale / .05) * .05, .2, 5);
+      return this.clamp(Math.round(Math.ceil(reqScale / .05) * .05 * 100) / 100, .2, 5);
     } else {
-      return this.clamp(Math.ceil(reqScale / .25) * .25, .2, 5);
+      return this.clamp(Math.round(Math.ceil(reqScale / .25) * .25 * 100) / 100, .2, 5);
     }
   }
 

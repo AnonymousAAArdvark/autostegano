@@ -45,7 +45,7 @@
     left: 0;
 }
 
-.figure:hover img, .cover_figure:hover img {
+.figure_active:hover img {
     z-index: 2;
     opacity: 0;
 }

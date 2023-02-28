@@ -9,7 +9,7 @@ interface MaxLSBSliderState {
 export interface MaxLSBSliderProps {
   value: number,
   onChange: (value: number) => void;
-  onAuto: () => number;
+  onAuto: () => void;
 }
 
 export class MaxLSBSlider extends React.Component<MaxLSBSliderProps, MaxLSBSliderState> {
@@ -22,13 +22,13 @@ export class MaxLSBSlider extends React.Component<MaxLSBSliderProps, MaxLSBSlide
   }
 
   render(): JSX.Element {
-    const { value, onChange } = this.props;
+    const { value, onAuto } = this.props;
 
     return (
       <div>
         <div className={styles.slider_label_container}>
           <p className={styles.slider_label}>Maximum Bits Encoded: { value }</p>
-          <button className={`${styles.auto_button}`}>Auto</button>
+          <button onClick={onAuto.bind(this)} className={`${styles.auto_button}`}>Auto</button>
         </div>
         <Slider
           value={value}

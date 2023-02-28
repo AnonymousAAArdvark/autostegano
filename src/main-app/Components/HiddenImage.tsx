@@ -123,6 +123,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     const numSvs = Math.min(img.width, img.height);
     this.onUpdateSvs(numSvs);
     this.svdComputationManager.computeSvd(height, width, pxls, numSvs);
+
   }
 
   updateScaledImage(scale: number): void {
@@ -260,13 +261,13 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
             value={rawNumSvs}
             max={Math.min(w, h)}
             onChange={this.onUpdateSvs.bind(this)}
-            onAuto={autoNumSvs}
+            onAuto={this.onAutoNumSvs.bind(this)}
           />
           <ResizeSlider
             imageType={"Hidden"}
             value={scale}
             onChange={this.onUpdateScale.bind(this)}
-            onAuto={autoHiddenScale}
+            onAuto={this.onAutoScale.bind(this)}
           />
         </div>
       </div>

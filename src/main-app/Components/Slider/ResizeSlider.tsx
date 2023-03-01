@@ -11,6 +11,7 @@ export interface ResizeSliderProps {
   value: number,
   onChange: (value: number) => void;
   onAuto: () => void;
+  disabled: boolean;
 }
 
 export class ResizeSlider extends React.Component<ResizeSliderProps, ResizeSliderState> {
@@ -41,13 +42,21 @@ export class ResizeSlider extends React.Component<ResizeSliderProps, ResizeSlide
   }
 
   render(): JSX.Element {
-    const { imageType, value, onAuto } = this.props;
+    const { imageType, value, onAuto, disabled } = this.props;
 
     return (
       <div>
-        <div className={styles.slider_label_container}>
-          <p className={styles.slider_label}>{ imageType } Image Scale: { value }x</p>
-          <button onClick={onAuto} className={`${styles.auto_button}`}>Auto</button>
+        <div className={`${styles.slider_label_container} ${disabled ? styles.disabled : ""}`}>
+          <p className={styles.slider_label}>
+            {imageType} Image Scale: {value}x
+          </p>
+          <button
+            onClick={onAuto}
+            disabled={disabled}
+            className={`${styles.auto_button} ${disabled ? styles.button_disabled : styles.button_enabled}`}
+          >
+            Auto
+          </button>
         </div>
         <Slider
           value={this.toIndex(value)}
@@ -55,9 +64,10 @@ export class ResizeSlider extends React.Component<ResizeSliderProps, ResizeSlide
           min={1}
           max={33}
           defaultValue={16}
-          activeDotStyle={{ borderColor: "#0072da" }}
+          activeDotStyle={{ borderColor: `${disabled ? "#cae0f4" : "#0072da"}` }}
           marks={this.generateMarks(8, 1, 33)}
-          className={styles.slider}
+          disabled={disabled}
+          className={`${styles.slider} ${disabled ? styles.slider_disabled : styles.slider_enabled}`}
         />
       </div>
     );

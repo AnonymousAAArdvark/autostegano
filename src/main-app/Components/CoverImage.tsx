@@ -1,6 +1,5 @@
 import * as React from "react";
 import { getImageData, loadImage } from "../image-functions";
-import { StegView } from "../CanvasView/StegView";
 import { StegComputationManager, StegInfo } from "../ComputationManager/stegComputationManager";
 import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
 import { ImageContainer } from "./ImageContainer";
@@ -28,6 +27,7 @@ interface CoverImageState {
   stegState: null | StegInfo;
   warnSize: boolean;
   img: null | HTMLImageElement;
+  decodeImg: null | HTMLImageElement;
 }
 
 export interface CoverImageProps {
@@ -47,10 +47,10 @@ export interface CoverImageProps {
   downloadStatus: string;
   onUpdateDownloadStatus: (status: string) => void;
   setDownloadCoverImage: (downloadCoverImage: () => void) => void;
+  mode: string;
 }
 
 export class CoverImage extends React.Component<CoverImageProps, CoverImageState> {
-  private stegViewRef: React.RefObject<StegView>;
   private stegComputationManager: StegComputationManager;
   private resizeComputationManager: ResizeComputationManager;
 
@@ -61,9 +61,9 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       warnSize: true,
       img: null,
       stegState: null,
+      decodeImg: null,
     };
 
-    this.stegViewRef = React.createRef();
     this.stegComputationManager = new StegComputationManager((stegResult) => {
       this.setState({ stegState: stegResult });
       this.props.onUpdateDownloadStatus(stegResult.data.length !== 0 ? "allow" : "block");
@@ -237,9 +237,75 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     }
   }
 
-  render(): JSX.Element {
-    const { maxLsb } = this.props;
+  makeEncodeImageView(): JSX.Element {
     const { img, resizeState, stegState } = this.state;
+    const { coverScale: scale, coverWidth: width, mode } = this.props;
+    const w = Math.trunc(width * scale);
+
+    const hasValidStegState =
+      img && stegState && stegState.width === w && stegState.data.length !== 0;
+    const hasComputedResizeState = resizeState && resizeState.status === ResizeStatus.COMPUTED;
+    const hasEmptyStegState = img && stegState && stegState.data.length === 0;
+    const hasImgAndResizeState = img && resizeState;
+
+    if (hasValidStegState && hasComputedResizeState) {
+      return (
+        <ImageContainer
+          origSrc={img}
+          src={arrToSrc(stegState.data, stegState.width, stegState.height)}
+          imgType={"cover"}
+          computingMsg={""}
+          onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
+        />
+      );
+    } else {
+      if (hasEmptyStegState && hasComputedResizeState) {
+        return (
+          <ImageContainer
+            origSrc={img}
+            src={resizeState.sImg.src}
+            imgType={"cover"}
+            computingMsg={
+              "Adjust the settings so that the hidden image data fits into the cover image!"
+            }
+            onUploadImage={this.loadImage.bind(this)}
+            mode={mode}
+          />
+        );
+      } else if (hasImgAndResizeState) {
+        return (
+          <ImageContainer
+            origSrc={img}
+            src={resizeState.sImg.src}
+            imgType={"cover"}
+            computingMsg={
+              resizeState.status === ResizeStatus.CURRENTLY_COMPUTING
+                ? "Computing Resize..."
+                : "Computing Steg..."
+            }
+            onUploadImage={this.loadImage.bind(this)}
+            mode={mode}
+          />
+        );
+      } else {
+        return (
+          <ImageContainer
+            origSrc={null}
+            src={""}
+            imgType={"cover"}
+            computingMsg={""}
+            onUploadImage={this.loadImage.bind(this)}
+            mode={mode}
+          />
+        );
+      }
+    }
+  }
+
+  render(): JSX.Element {
+    const { maxLsb, mode } = this.props;
+    const { img } = this.state;
     const {
       coverScale: scale,
       coverWidth: width,
@@ -251,76 +317,27 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     const w = Math.trunc(width * scale);
     const h = Math.trunc(height * scale);
 
-    let mainImageView: JSX.Element;
-    const hasValidStegState = img && stegState && stegState.width === w && stegState.data.length !== 0;
-    const hasComputedResizeState = resizeState && resizeState.status === ResizeStatus.COMPUTED;
-    const hasEmptyStegState = img && stegState && stegState.data.length === 0;
-    const hasImgAndResizeState = img && resizeState;
-
-    if (hasValidStegState && hasComputedResizeState) {
-      mainImageView = (
-        <ImageContainer
-          origSrc={img}
-          src={arrToSrc(stegState.data, stegState.width, stegState.height)}
-          imgType={"cover"}
-          computingMsg={""}
-          onUploadImage={this.loadImage.bind(this)}
-        />
-      );
-    } else {
-      if (hasEmptyStegState && hasComputedResizeState) {
-        mainImageView = (
-          <ImageContainer
-            origSrc={img}
-            src={resizeState.sImg.src}
-            imgType={"cover"}
-            computingMsg={
-              "Adjust the settings so that the hidden image data fits into the cover image!"
-            }
-            onUploadImage={this.loadImage.bind(this)}
-          />
-        );
-      } else if (hasImgAndResizeState) {
-        mainImageView = (
-          <ImageContainer
-            origSrc={img}
-            src={resizeState.sImg.src}
-            imgType={"cover"}
-            computingMsg={
-              resizeState.status === ResizeStatus.CURRENTLY_COMPUTING
-                ? "Computing Resize..."
-                : "Computing Steg..."
-            }
-            onUploadImage={this.loadImage.bind(this)}
-          />
-        );
-      } else {
-        mainImageView = (
-          <ImageContainer
-            origSrc={null}
-            src={""}
-            imgType={"cover"}
-            computingMsg={""}
-            onUploadImage={this.loadImage.bind(this)}
-          />
-        );
-      }
-    }
+    const mainImageView = this.makeEncodeImageView();
 
     return (
       <div>
         {mainImageView}
-        <div className={`${styles.calc_container}`}>
+        <div className={`${styles.calc_container} ${mode === "encode" ? "" : styles.disabled}`}>
           <div className={styles.result_container}>
-            <span className={canEncode ? styles.green : styles.red}>
+            <span
+              className={
+                `${canEncode ? styles.green : styles.red} ` +
+                `${mode === "encode" ? "" : styles.disabled}`
+              }
+            >
               {getCoverSize().toLocaleString()} bytes{" "}
             </span>
             =
           </div>
           <p className={styles.calc}>
             <b>{w.toLocaleString()}</b> width * <b>{h.toLocaleString()}</b> height *{" "}
-              <b>{maxLsb.toLocaleString()}</b>
-            {" "}maximum bits encoded * <b>3</b> channels / <b>8</b> bit-per-byte
+            <b>{maxLsb.toLocaleString()}</b> maximum bits encoded * <b>3</b> channels / <b>8</b>{" "}
+            bit-per-byte
           </p>
         </div>
         <div className={styles.options_container}>
@@ -328,12 +345,14 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
             value={maxLsb}
             onChange={this.onUpdateMaxLSB.bind(this)}
             onAuto={this.onAutoMaxLsb.bind(this)}
+            disabled={img === null || mode !== "encode"}
           />
           <ResizeSlider
             imageType={"Cover"}
             value={scale}
             onChange={this.onUpdateScale.bind(this)}
             onAuto={this.onAutoScale.bind(this)}
+            disabled={img === null || mode !== "encode"}
           />
         </div>
       </div>

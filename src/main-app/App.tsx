@@ -8,7 +8,7 @@ import Slider from "rc-slider";
 import { MaxLSBSlider } from "./Components/Slider/MaxLSBSlider";
 import { ResizeSlider } from "./Components/Slider/ResizeSlider";
 import { SingularValuesSlider } from "./Components/Slider/SingularValuesSlider";
-import { VscChevronRight } from "react-icons/vsc"
+import { VscChevronRight } from "react-icons/vsc";
 import styles from "./Styles/App.module.css";
 
 interface AppState {
@@ -54,19 +54,19 @@ export class App extends React.Component<AppProps, AppState> {
   }
 
   onUpdateHiddenDimensions(hiddenWidth: number, hiddenHeight: number): void {
-    this.setState( { hiddenWidth, hiddenHeight });
+    this.setState({ hiddenWidth, hiddenHeight });
   }
 
   onUpdateCoverDimensions(coverWidth: number, coverHeight: number): void {
-    this.setState( { coverWidth, coverHeight });
+    this.setState({ coverWidth, coverHeight });
   }
 
   onUpdateHiddenScale(hiddenScale: number): void {
-    this.setState( {hiddenScale });
+    this.setState({ hiddenScale });
   }
 
   onUpdateCoverScale(coverScale: number): void {
-    this.setState( {coverScale });
+    this.setState({ coverScale });
   }
 
   onUpdateNumSvs(rawNumSvs: number): void {
@@ -83,46 +83,68 @@ export class App extends React.Component<AppProps, AppState> {
 
   getCoverSize(): number {
     const { coverWidth, coverHeight, coverScale, maxLsb } = this.state;
-    return Math.trunc(coverWidth * coverScale * coverHeight * coverScale * 3 * maxLsb / 8);
+    return Math.trunc((coverWidth * coverScale * coverHeight * coverScale * 3 * maxLsb) / 8);
   }
 
   getHiddenSize(): number {
     const { hiddenWidth, hiddenHeight, hiddenScale, numSvs } = this.state;
-    return Math.trunc((hiddenWidth + hiddenHeight) * hiddenScale) * numSvs * 3 * 2 + (hiddenWidth ? 6 : 0);
+    return (
+      Math.trunc((hiddenWidth + hiddenHeight) * hiddenScale) * numSvs * 3 * 2 +
+      (hiddenWidth ? 6 : 0)
+    );
   }
 
   autoHiddenScale(): number {
-    const { numSvs, hiddenWidth, hiddenHeight } = this.state;
+    const { numSvs, hiddenWidth, hiddenHeight, hiddenScale } = this.state;
+    if (this.getCoverSize() === 0) {
+      return hiddenScale;
+    }
     let reqScale = (this.getCoverSize() - 6) / (3 * 2 * numSvs * (hiddenWidth + hiddenHeight));
     if (reqScale * Math.min(hiddenWidth, hiddenHeight) < numSvs) {
-      reqScale = Math.sqrt((this.getCoverSize() - 6) / (3 * 2 * Math.min(hiddenWidth, hiddenHeight) * (hiddenWidth + hiddenHeight)));
+      reqScale = Math.sqrt(
+        (this.getCoverSize() - 6) /
+          (3 * 2 * Math.min(hiddenWidth, hiddenHeight) * (hiddenWidth + hiddenHeight)),
+      );
     }
     if (reqScale < 1) {
-      return this.clamp(Math.round(Math.floor(reqScale / .05) * .05 * 100) / 100, .2, 5);
+      return this.clamp(Math.round(Math.floor(reqScale / 0.05) * 0.05 * 100) / 100, 0.2, 5);
     } else {
-      return this.clamp(Math.round(Math.floor(reqScale / .25) * .25 * 100) / 100, .2, 5);
+      return this.clamp(Math.round(Math.floor(reqScale / 0.25) * 0.25 * 100) / 100, 0.2, 5);
     }
   }
 
   autoCoverScale(): number {
-    const { maxLsb, coverWidth, coverHeight } = this.state
-    const reqScale = Math.sqrt(this.getHiddenSize() * 8 / (coverWidth * coverHeight * 3 * maxLsb));
+    const { maxLsb, coverWidth, coverHeight, coverScale } = this.state;
+    if (this.getHiddenSize() === 0) {
+      return coverScale;
+    }
+    const reqScale = Math.sqrt(
+      (this.getHiddenSize() * 8) / (coverWidth * coverHeight * 3 * maxLsb),
+    );
     if (reqScale < 1) {
-      return this.clamp(Math.round(Math.ceil(reqScale / .05) * .05 * 100) / 100, .2, 5);
+      return this.clamp(Math.round(Math.ceil(reqScale / 0.05) * 0.05 * 100) / 100, 0.2, 5);
     } else {
-      return this.clamp(Math.round(Math.ceil(reqScale / .25) * .25 * 100) / 100, .2, 5);
+      return this.clamp(Math.round(Math.ceil(reqScale / 0.25) * 0.25 * 100) / 100, 0.2, 5);
     }
   }
 
   autoNumSvs(): number {
-    const { hiddenScale, hiddenWidth, hiddenHeight } = this.state;
-    const reqNumSvs = (this.getCoverSize() - 6) / (3 * 2 * hiddenScale * (hiddenWidth + hiddenHeight));
+    const { hiddenScale, hiddenWidth, hiddenHeight, numSvs } = this.state;
+    if (this.getCoverSize() === 0) {
+      return numSvs;
+    }
+    const reqNumSvs =
+      (this.getCoverSize() - 6) / (3 * 2 * hiddenScale * (hiddenWidth + hiddenHeight));
     return this.clamp(Math.floor(reqNumSvs), 1, Math.min(hiddenWidth, hiddenHeight));
   }
 
   autoMaxLsb(): number {
-    const { coverScale, coverWidth, coverHeight } = this.state
-    const reqMaxLsb = this.getHiddenSize() * 8 / (coverWidth * coverScale * coverHeight * coverScale * 3);
+    const { coverScale, coverWidth, coverHeight, maxLsb } = this.state;
+    if (this.getHiddenSize() === 0) {
+      return maxLsb;
+    }
+    const reqMaxLsb =
+      (this.getHiddenSize() * 8) / (coverWidth * coverScale * coverHeight * coverScale * 3);
     return this.clamp(Math.ceil(reqMaxLsb), 1, 8);
   }
 
@@ -144,17 +166,35 @@ export class App extends React.Component<AppProps, AppState> {
   render(): JSX.Element {
     return (
       <div>
-        <Navbar/>
+        <Navbar />
         <div className={styles.header_container}>
           <div className={styles.section_label_container}>
             <h2 className={styles.section_label}>Hidden Image</h2>
           </div>
           <div className={styles.group_btn_container}>
             <div className={styles.group_btn}>
-              <input type={"radio"} id={"encode"} name={"mode"} value={"encode"} checked={this.state.mode === "encode"} onChange={this.handleModeChange.bind(this)}/>
-              <label className={styles.mode_btn} htmlFor={"encode"}>Encode</label>
-              <input type={"radio"} id={"decode"} name={"mode"} value={"decode"} checked={this.state.mode === "decode"} onChange={this.handleModeChange.bind(this)}/>
-              <label className={styles.mode_btn} htmlFor={"decode"}>Decode</label>
+              <input
+                type={"radio"}
+                id={"encode"}
+                name={"mode"}
+                value={"encode"}
+                checked={this.state.mode === "encode"}
+                onChange={this.handleModeChange.bind(this)}
+              />
+              <label className={styles.mode_btn} htmlFor={"encode"}>
+                Encode
+              </label>
+              <input
+                type={"radio"}
+                id={"decode"}
+                name={"mode"}
+                value={"decode"}
+                checked={this.state.mode === "decode"}
+                onChange={this.handleModeChange.bind(this)}
+              />
+              <label className={styles.mode_btn} htmlFor={"decode"}>
+                Decode
+              </label>
             </div>
           </div>
           <div className={styles.section_label_container}>
@@ -178,10 +218,15 @@ export class App extends React.Component<AppProps, AppState> {
               onUpdateSvdState={this.onUpdateSvdState.bind(this)}
               getCoverSize={this.getCoverSize.bind(this)}
               getHiddenSize={this.getHiddenSize.bind(this)}
+              mode={this.state.mode}
             />
           </div>
           <div className={styles.info_container}>
-            <div className={styles.ratio_container}>
+            <div
+              className={`${styles.ratio_container} ${
+                this.state.mode === "encode" ? "" : styles.disabled
+              }`}
+            >
               <h2 className={styles.top_ratio}>{this.getHiddenSize().toExponential(3)}</h2>
               <h2 className={styles.bottom_ratio}>{this.getCoverSize().toExponential(3)}</h2>
             </div>
@@ -189,7 +234,11 @@ export class App extends React.Component<AppProps, AppState> {
               className={
                 `${styles.status_arrow} ` +
                 `${this.state.mode === "encode" ? "" : styles.rotate} ` +
-                `${this.getCoverSize() >= this.getHiddenSize() ? styles.green : styles.red} `
+                `${
+                  this.getCoverSize() >= this.getHiddenSize() || this.state.mode !== "encode"
+                    ? styles.green
+                    : styles.red
+                } `
               }
             />
           </div>
@@ -211,13 +260,16 @@ export class App extends React.Component<AppProps, AppState> {
               downloadStatus={this.state.downloadStatus}
               onUpdateDownloadStatus={this.onUpdateDownloadStatus.bind(this)}
               setDownloadCoverImage={(downloadCoverImage) => this.setState({ downloadCoverImage })}
+              mode={this.state.mode}
             />
           </div>
         </div>
         <div className={styles.download_container}>
           <button
             onClick={this.onClickDownload.bind(this)}
-            className={`${styles.download_btn} ${this.state.downloadStatus === "allow" ? styles.download_allow : ""}`}
+            className={`${styles.download_btn} ${
+              this.state.downloadStatus === "allow" ? styles.download_allow : ""
+            }`}
           >
             Download Encoded Cover Image
           </button>

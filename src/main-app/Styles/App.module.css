@@ -103,6 +103,10 @@
     flex-direction: column;
 }
 
+.ratio_container.disabled {
+    color: #c8c8c8;
+}
+
 .top_ratio {
     font-size: 2vw;
     border-bottom: 3px solid;
@@ -144,7 +148,7 @@
     font-size: 20px;
     cursor: not-allowed;
     border: 2px solid #92dc92;
-    background-color: #a8e8a8;
+    background-color: #98e598;
     border-radius: 5px;
     color: #fbfbfb;
 }

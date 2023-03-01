@@ -1,6 +1,5 @@
 import * as React from "react";
 import { getImageData, imageDataToPixels, loadImage } from "../image-functions";
-import { SvdApproximation } from "../CanvasView/SvdApproximation";
 import { SvdComputationManager } from "../ComputationManager/svdComputationManager";
 import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
 import { ImageContainer } from "./ImageContainer";
@@ -62,10 +61,10 @@ export interface HiddenImageProps {
   onUpdateSvdState: (svdState: SvdState) => void;
   getCoverSize: () => number;
   getHiddenSize: () => number;
+  mode: string;
 }
 
 export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageState> {
-  private svdViewRef: React.RefObject<SvdApproximation>;
   private svdComputationManager: SvdComputationManager;
   private resizeComputationManager: ResizeComputationManager;
 
@@ -77,7 +76,6 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
       img: null,
     };
 
-    this.svdViewRef = React.createRef();
     this.svdComputationManager = new SvdComputationManager((svdInfo) => {
       this.props.onUpdateSvdState({ status: SvdStatus.COMPUTED, ...svdInfo });
     });
@@ -201,29 +199,17 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     this.props.onUpdateNumSvs(numSvs);
   }
 
-  render(): JSX.Element {
-    const { numSvs, rawNumSvs, autoNumSvs, autoHiddenScale } = this.props;
+  makeEncodeImageView(): JSX.Element {
     const { img, resizeState } = this.state;
-    const {
-      hiddenScale: scale,
-      hiddenWidth: width,
-      hiddenHeight: height,
-      svdState,
-      getCoverSize,
-      getHiddenSize,
-    } = this.props;
-    const canEncode = getCoverSize() >= getHiddenSize();
-    const w = Math.trunc(width * scale);
-    const h = Math.trunc(height * scale);
+    const { svdState, mode } = this.props;
 
-    let mainImageView: JSX.Element;
     if (
       img &&
       svdState.status === SvdStatus.COMPUTED &&
       svdState.lowRankApproximation !== undefined &&
       resizeState
     ) {
-      mainImageView = (
+      return (
         <ImageContainer
           origSrc={img}
           src={RgbToSrc(
@@ -234,10 +220,11 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
           imgType={"hidden"}
           computingMsg={""}
           onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
         />
       );
     } else if (img && resizeState) {
-      mainImageView = (
+      return (
         <ImageContainer
           origSrc={img}
           src={resizeState.sImg.src}
@@ -248,32 +235,61 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
               : "Computing SVD..."
           }
           onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
         />
       );
     } else {
-      mainImageView = (
+      return (
         <ImageContainer
           origSrc={null}
           src={""}
           imgType={"hidden"}
           computingMsg={""}
           onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
         />
       );
     }
 
+  }
+
+  render(): JSX.Element {
+    const { numSvs, rawNumSvs, mode } = this.props;
+    const { img } = this.state;
+    const {
+      hiddenScale: scale,
+      hiddenWidth: width,
+      hiddenHeight: height,
+      getCoverSize,
+      getHiddenSize,
+    } = this.props;
+    const canEncode = getCoverSize() >= getHiddenSize();
+    const w = Math.trunc(width * scale);
+    const h = Math.trunc(height * scale);
+
+    let mainImageView = this.makeEncodeImageView();
+
     return (
       <div>
         {mainImageView}
-        <div className={`${styles.calc_container} ${styles.calc_container_left}`}>
+        <div
+          className={`${styles.calc_container} ${styles.left} ${mode === "encode" ? "" : styles.disabled}`}
+        >
           <p className={styles.calc}>
-            (<b>{w.toLocaleString()}</b> width + <b>{h.toLocaleString()}</b> height) * <b>{numSvs.toLocaleString()}</b>
-            {" "}rank * <b>3</b> channels * <b>2</b> bytes-per-float32 + <b>{width ? 6 : 0}</b> bytes of metadata
+            (<b>{w.toLocaleString()}</b> width + <b>{h.toLocaleString()}</b> height) *{" "}
+            <b>{numSvs.toLocaleString()}</b> rank * <b>3</b> channels * <b>2</b> bytes-per-float32 +{" "}
+            <b>{width ? 6 : 0}</b> bytes of metadata
           </p>
           <div className={styles.result_container}>
             =
-            <span className={canEncode ? styles.green : styles.red}>
-              {" "}{getHiddenSize().toLocaleString()} bytes
+            <span
+              className={
+                `${canEncode ? styles.green : styles.red} ` +
+                `${mode === "encode" ? "" : styles.disabled}`
+              }
+            >
+              {" "}
+              {getHiddenSize().toLocaleString()} bytes
             </span>
           </div>
         </div>
@@ -283,12 +299,14 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
             max={Math.min(w, h)}
             onChange={this.onUpdateSvs.bind(this)}
             onAuto={this.onAutoNumSvs.bind(this)}
+            disabled={img === null || mode !== "encode"}
           />
           <ResizeSlider
             imageType={"Hidden"}
             value={scale}
             onChange={this.onUpdateScale.bind(this)}
             onAuto={this.onAutoScale.bind(this)}
+            disabled={img === null || mode !== "encode"}
           />
         </div>
       </div>

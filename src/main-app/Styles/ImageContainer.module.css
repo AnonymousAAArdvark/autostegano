@@ -4,7 +4,7 @@
     margin-bottom: 0;
 }
 
-.hover_container {
+.hover_tip_container {
     height: 40px;
     width: 250px;
     position: relative;
@@ -44,17 +44,26 @@
     height: 35px;
     padding: 4px 8px;
     color: #fbfbfb;
-    background-color: #1184ea;
     border-radius: 5px;
-    border: 2px solid #0072da;
-    cursor: pointer;
     font-size: 18px;
 }
 
-.upload_btn:hover {
+.upload_btn.enabled {
+    background-color: #1184ea;
+    border: 2px solid #0072da;
+    cursor: pointer;
+}
+
+.upload_btn.enabled:hover {
     background-color: #0d7ee3;
 }
 
-.upload_btn:active {
+.upload_btn.enabled:active {
     background-color: #2c95f1;
+}
+
+.upload_btn.disabled {
+    background-color: #83baea;
+    border: 2px solid #85b0d5;
+    cursor: not-allowed;
 }

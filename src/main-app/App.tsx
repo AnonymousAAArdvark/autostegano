@@ -23,6 +23,8 @@ interface AppState {
   maxLsb: number;
   svdState: SvdState;
   mode: string;
+  downloadStatus: string;
+  downloadCoverImage: () => void;
 }
 
 type AppProps = Record<string, unknown>;
@@ -42,6 +44,8 @@ export class App extends React.Component<AppProps, AppState> {
       maxLsb: 1,
       svdState: { status: SvdStatus.CURRENTLY_COMPUTING },
       mode: "encode",
+      downloadStatus: "inactive",
+      downloadCoverImage: () => {},
     };
   }
 
@@ -127,76 +131,19 @@ export class App extends React.Component<AppProps, AppState> {
     this.setState({ mode });
   }
 
+  onUpdateDownloadStatus(status: string) {
+    this.setState({ downloadStatus: status });
+  }
+
+  onClickDownload() {
+    if (this.state.downloadStatus === "allow") {
+      this.state.downloadCoverImage();
+    }
+  }
+
   render(): JSX.Element {
-    const { maxLsb, numSvs, hiddenScale, coverScale } = this.state;
-
-
     return (
       <div>
-        {/*<Navbar/>*/}
-        {/*<div className={styles.header_container}>*/}
-        {/*  <div className={styles.section_label_container}>*/}
-        {/*    <h2 className={styles.section_label}>Hidden Image</h2>*/}
-        {/*  </div>*/}
-        {/*  <div className={styles.group_btn_container}>*/}
-        {/*    <div className={styles.group_btn}>*/}
-        {/*      <input type={"radio"} id={"encode"} name={"mode"} value={"encode"} checked={this.state.mode === "encode"} onChange={this.handleModeChange.bind(this)}/>*/}
-        {/*      <label className={styles.mode_btn} htmlFor={"encode"}>Encode</label>*/}
-        {/*      <input type={"radio"} id={"decode"} name={"mode"} value={"decode"} checked={this.state.mode === "decode"} onChange={this.handleModeChange.bind(this)}/>*/}
-        {/*      <label className={styles.mode_btn} htmlFor={"decode"}>Decode</label>*/}
-        {/*    </div>*/}
-        {/*  </div>*/}
-        {/*  <div className={styles.section_label_container}>*/}
-        {/*    <h2 className={styles.section_label}>Cover Image</h2>*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-        {/*<div className={styles.main}>*/}
-        {/*  <div className={styles.hidden_image_container}>*/}
-        {/*    <ImageContainer*/}
-        {/*      src={"example-images/hidden-image.jpg"}*/}
-        {/*      origSrc={"example-images/mountains_sea_5svs.jpg"}*/}
-        {/*      imgType={"hidden"}*/}
-        {/*      computingMsg={"Computing Resize..."}*/}
-        {/*    />*/}
-        {/*    <div className={`${styles.calc_container} ${styles.calc_container_left}`}>*/}
-        {/*      <p className={styles.calc}>643(width) * 439(height) * 3(channels) =*/}
-        {/*        <span className={styles.calc_result}> 29455 bits</span>*/}
-        {/*      </p>*/}
-        {/*    </div>*/}
-        {/*    <div className={styles.options_container}>*/}
-        {/*      <SingularValuesSlider value={numSvs} max={500} onChange={this.onUpdateNumSvs.bind(this)} />*/}
-        {/*      <ResizeSlider imageType={"Hidden"} value={hiddenScale} onChange={this.onUpdateHiddenScale.bind(this)} />*/}
-        {/*    </div>*/}
-        {/*  </div>*/}
-        {/*  <div className={styles.info_container}>*/}
-        {/*    <div className={styles.ratio_container}>*/}
-        {/*      <h2 className={styles.top_ratio}>12,344</h2>*/}
-        {/*      <h2 className={styles.bottom_ratio}>32,445</h2>*/}
-        {/*    </div>*/}
-        {/*    <VscChevronRight className={`${styles.status_arrow} ${this.state.mode === "encode" ? "" : styles.rotate}`}/>*/}
-        {/*  </div>*/}
-        {/*  <div className={styles.cover_image_container}>*/}
-        {/*    <ImageContainer*/}
-        {/*      src={"example-images/mountains_sea.jpg"}*/}
-        {/*      origSrc={"example-images/mountains_sea_5svs.jpg"}*/}
-        {/*      imgType={"cover"}*/}
-        {/*      computingMsg={"Computing Resize..."}*/}
-        {/*    />*/}
-        {/*    <div className={`${styles.calc_container}`}>*/}
-        {/*      <p className={styles.calc}>*/}
-        {/*        <span className={styles.calc_result}>29455 bits </span>*/}
-        {/*        = 643(width) * 439(height) * 3(channels)*/}
-        {/*      </p>*/}
-        {/*    </div>*/}
-        {/*    <div className={styles.options_container}>*/}
-        {/*      <MaxLSBSlider value={maxLsb} onChange={this.onUpdateMaxLsb.bind(this)}/>*/}
-        {/*      <ResizeSlider imageType={"Cover"} value={coverScale} onChange={this.onUpdateCoverScale.bind(this)} />*/}
-        {/*    </div>*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-        {/*<div className={styles.download_container}>*/}
-        {/*  <button className={styles.download_btn}>Download Encoded Cover Image</button>*/}
-        {/*</div>*/}
         <Navbar/>
         <div className={styles.header_container}>
           <div className={styles.section_label_container}>
@@ -261,11 +208,19 @@ export class App extends React.Component<AppProps, AppState> {
               svdState={this.state.svdState}
               getCoverSize={this.getCoverSize.bind(this)}
               getHiddenSize={this.getHiddenSize.bind(this)}
+              downloadStatus={this.state.downloadStatus}
+              onUpdateDownloadStatus={this.onUpdateDownloadStatus.bind(this)}
+              setDownloadCoverImage={(downloadCoverImage) => this.setState({ downloadCoverImage })}
             />
           </div>
         </div>
         <div className={styles.download_container}>
-          <button className={styles.download_btn}>Download Encoded Cover Image</button>
+          <button
+            onClick={this.onClickDownload.bind(this)}
+            className={`${styles.download_btn} ${this.state.downloadStatus === "allow" ? styles.download_allow : ""}`}
+          >
+            Download Encoded Cover Image
+          </button>
         </div>
       </div>
     );

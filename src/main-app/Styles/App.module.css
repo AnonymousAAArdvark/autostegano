@@ -142,17 +142,23 @@
     margin: auto;
     padding: 7px 14px;
     font-size: 20px;
-    cursor: pointer;
-    border: 2px solid #00a500;
-    background-color: #00be00;
+    cursor: not-allowed;
+    border: 2px solid #92dc92;
+    background-color: #a8e8a8;
     border-radius: 5px;
     color: #fbfbfb;
 }
 
-.download_btn:hover {
+.download_allow {
+    cursor: pointer;
+    border: 2px solid #00a500;
+    background-color: #00be00;
+}
+
+.download_allow:hover {
     background-color: #00b700;
 }
 
-.download_btn:active {
+.download_allow:active {
     background-color: #00be00;
 }

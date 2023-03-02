@@ -10,15 +10,17 @@
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "prettier:check": "prettier --check \"src/**/*.{ts,tsx,json}\" \"*.{js,json}\"",
     "prettier:fix": "prettier --write \"src/**/*.{ts,tsx,json}\" \"*.{js,json}\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/anonymousaaaardvark/autostegano.git"
   },
   "author": "Andrew Yang",
   "license": "MIT",
-  "homepage": "",
+  "homepage": "http://anonymousaaaardvark.github.io/autostegano",
   "dependencies": {
     "css-loader": "^6.7.3",
     "image-steganography-worker": "file:image-steganography-worker/pkg",
@@ -45,6 +47,7 @@
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "gh-pages": "^5.0.0",
     "prettier": "2.8.4",
     "rc-slider": "^10.1.1",
     "ts-loader": "^9.4.2",

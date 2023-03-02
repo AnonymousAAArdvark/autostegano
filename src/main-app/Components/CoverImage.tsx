@@ -44,9 +44,12 @@ export interface CoverImageProps {
   svdState: SvdState;
   getCoverSize: () => number;
   getHiddenSize: () => number;
-  downloadStatus: string;
-  onUpdateDownloadStatus: (status: string) => void;
+  onUpdateCoverDownloadStatus: (status: string) => void;
   setDownloadCoverImage: (downloadCoverImage: () => void) => void;
+  onUpdateHiddenDownloadStatus: (status: string) => void;
+  setDownloadHiddenImage: (downloadHiddenImage: () => void) => void;
+  onUpdateDecodedImage: (decodedImg: string) => void;
+  decodedImageSrc: string;
   mode: string;
 }
 
@@ -65,13 +68,20 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     };
 
     this.stegComputationManager = new StegComputationManager((stegResult) => {
-      this.setState({ stegState: stegResult });
-      this.props.onUpdateDownloadStatus(stegResult.data.length !== 0 ? "allow" : "block");
-      // if (stegResult.mode == "encode") {
-      //   this.stegComputationManager.computeDecode(
-      //     new ImageData(stegResult.data, stegResult.width, stegResult.height),
-      //   );
-      // }
+      if (stegResult.mode === "encode") {
+        this.setState({ stegState: stegResult });
+        this.props.onUpdateCoverDownloadStatus(stegResult.data.length !== 0 ? "allow" : "block");
+      } else {
+        if (stegResult.data.length !== 0) {
+          this.props.onUpdateDecodedImage(
+            arrToSrc(stegResult.data, stegResult.width, stegResult.height),
+          );
+          this.props.onUpdateHiddenDownloadStatus("allow");
+        } else {
+          this.props.onUpdateDecodedImage("");
+          this.props.onUpdateHiddenDownloadStatus("block");
+        }
+      }
     });
 
     this.resizeComputationManager = new ResizeComputationManager((url) => {
@@ -80,11 +90,13 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
 
     this.onAutoScale = this.onAutoScale.bind(this);
     this.onAutoMaxLsb = this.onAutoMaxLsb.bind(this);
-    this.downloadImage = this.downloadImage.bind(this);
+    this.downloadCoverImage = this.downloadCoverImage.bind(this);
+    this.downloadHiddenImage = this.downloadHiddenImage.bind(this);
   }
 
   componentDidMount() {
-    this.props.setDownloadCoverImage(this.downloadImage);
+    this.props.setDownloadCoverImage(this.downloadCoverImage);
+    this.props.setDownloadHiddenImage(this.downloadHiddenImage);
   }
 
   componentDidUpdate(prevProps: CoverImageProps): void {
@@ -112,27 +124,32 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       throw exc; // rethrow
     }
 
-    if (width > 4000 || height > 4000) {
-      const msg =
-        "Your image is quite large. Computing the Steganography may take a while. Continue?";
-      if (!window.confirm(msg)) {
-        return;
+    if (this.props.mode === "encode") {
+      if (width > 4000 || height > 4000) {
+        const msg =
+          "Your image is quite large. Computing the Steganography may take a while. Continue?";
+        if (!window.confirm(msg)) {
+          return;
+        }
+        this.setState({ warnSize: false });
       }
-      this.setState({ warnSize: false });
-    }
 
-    this.setState({ img } as CoverImageState);
-    if (this.props.coverScale === 1) {
-      this.props.onUpdateCoverDimensions(width, height);
-      this.setState({
-        resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
-      } as CoverImageState);
-      this.computeEncode(imageData, this.props.maxLsb);
+      this.setState({ img } as CoverImageState);
+      if (this.props.coverScale === 1) {
+        this.props.onUpdateCoverDimensions(width, height);
+        this.setState({
+          resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
+        } as CoverImageState);
+        this.computeEncode(imageData, this.props.maxLsb);
+      } else {
+        this.setState({
+          resizeState: null,
+        } as CoverImageState);
+        this.resizeComputationManager.computeResize(imageData, this.props.coverScale);
+      }
     } else {
-      this.setState({
-        resizeState: null,
-      } as CoverImageState);
-      this.resizeComputationManager.computeResize(imageData, this.props.coverScale);
+      this.setState({ decodeImg: img } as CoverImageState);
+      this.stegComputationManager.computeDecode(imageData);
     }
   }
 
@@ -157,7 +174,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     }
 
     this.props.onUpdateCoverScale(scale);
-    this.props.onUpdateDownloadStatus("block");
+    this.props.onUpdateCoverDownloadStatus("block");
     this.setState({
       resizeState: { ...this.state.resizeState, status: ResizeStatus.CURRENTLY_COMPUTING },
     } as CoverImageState);
@@ -225,7 +242,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     this.props.onUpdateMaxLsb(maxLsb);
   }
 
-  downloadImage(): void {
+  downloadCoverImage(): void {
     const { stegState } = this.state;
     if (stegState) {
       const link = document.createElement("a");
@@ -237,9 +254,20 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     }
   }
 
+  downloadHiddenImage(): void {
+    if (this.props.decodedImageSrc !== "") {
+      const link = document.createElement("a");
+      link.download = "hidden_image.png";
+      link.href = this.props.decodedImageSrc;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
   makeEncodeImageView(): JSX.Element {
     const { img, resizeState, stegState } = this.state;
-    const { coverScale: scale, coverWidth: width, mode } = this.props;
+    const { coverScale: scale, coverWidth: width, mode, getHiddenSize } = this.props;
     const w = Math.trunc(width * scale);
 
     const hasValidStegState =
@@ -251,7 +279,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     if (hasValidStegState && hasComputedResizeState) {
       return (
         <ImageContainer
-          origSrc={img}
+          origSrc={img.src}
           src={arrToSrc(stegState.data, stegState.width, stegState.height)}
           imgType={"cover"}
           computingMsg={""}
@@ -263,7 +291,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       if (hasEmptyStegState && hasComputedResizeState) {
         return (
           <ImageContainer
-            origSrc={img}
+            origSrc={img.src}
             src={resizeState.sImg.src}
             imgType={"cover"}
             computingMsg={
@@ -276,13 +304,15 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       } else if (hasImgAndResizeState) {
         return (
           <ImageContainer
-            origSrc={img}
+            origSrc={img.src}
             src={resizeState.sImg.src}
             imgType={"cover"}
             computingMsg={
               resizeState.status === ResizeStatus.CURRENTLY_COMPUTING
                 ? "Computing Resize..."
-                : "Computing Steg..."
+                : getHiddenSize() !== 0
+                ? "Computing Steg..."
+                : "Waiting for hidden image upload..."
             }
             onUploadImage={this.loadImage.bind(this)}
             mode={mode}
@@ -291,7 +321,7 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       } else {
         return (
           <ImageContainer
-            origSrc={null}
+            origSrc={""}
             src={""}
             imgType={"cover"}
             computingMsg={""}
@@ -300,6 +330,48 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
           />
         );
       }
+    }
+  }
+
+  makeDecodeImageView() {
+    const { decodeImg } = this.state;
+    const { mode, decodedImageSrc } = this.props;
+
+    if (decodeImg && decodedImageSrc !== "") {
+      return (
+        <ImageContainer
+          origSrc={"none"}
+          src={decodeImg.src}
+          imgType={"cover"}
+          computingMsg={""}
+          onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
+        />
+      );
+    } else if (decodeImg) {
+      return (
+        <ImageContainer
+          origSrc={"none"}
+          src={decodeImg.src}
+          imgType={"cover"}
+          computingMsg={
+            "Cover image not large enough to hold supposed hidden image bytes! Has the hidden image actually been encoded?"
+          }
+          onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
+        />
+      );
+    } else {
+      return (
+        <ImageContainer
+          origSrc={""}
+          src={""}
+          imgType={"cover"}
+          computingMsg={""}
+          onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
+        />
+      );
     }
   }
 
@@ -317,7 +389,8 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     const w = Math.trunc(width * scale);
     const h = Math.trunc(height * scale);
 
-    const mainImageView = this.makeEncodeImageView();
+    const mainImageView =
+      mode === "encode" ? this.makeEncodeImageView() : this.makeDecodeImageView();
 
     return (
       <div>

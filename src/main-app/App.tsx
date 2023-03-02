@@ -22,9 +22,12 @@ interface AppState {
   numSvs: number;
   maxLsb: number;
   svdState: SvdState;
+  decodedImageSrc: string;
   mode: string;
-  downloadStatus: string;
+  coverDownloadStatus: string;
+  hiddenDownloadStatus: string;
   downloadCoverImage: () => void;
+  downloadHiddenImage: () => void;
 }
 
 type AppProps = Record<string, unknown>;
@@ -43,9 +46,12 @@ export class App extends React.Component<AppProps, AppState> {
       numSvs: 0,
       maxLsb: 1,
       svdState: { status: SvdStatus.CURRENTLY_COMPUTING },
+      decodedImageSrc: "",
       mode: "encode",
-      downloadStatus: "inactive",
+      coverDownloadStatus: "inactive",
+      hiddenDownloadStatus: "inactive",
       downloadCoverImage: () => {},
+      downloadHiddenImage: () => {},
     };
   }
 
@@ -148,22 +154,39 @@ export class App extends React.Component<AppProps, AppState> {
     return this.clamp(Math.ceil(reqMaxLsb), 1, 8);
   }
 
+  onUpdateDecodedImage(src: string): void {
+    this.setState({ decodedImageSrc: src });
+  }
+
   handleModeChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const mode = event.target.value;
     this.setState({ mode });
   }
 
-  onUpdateDownloadStatus(status: string) {
-    this.setState({ downloadStatus: status });
+  onUpdateCoverDownloadStatus(status: string) {
+    this.setState({ coverDownloadStatus: status });
+  }
+
+  onUpdateHiddenDownloadStatus(status: string) {
+    this.setState({ hiddenDownloadStatus: status });
   }
 
   onClickDownload() {
-    if (this.state.downloadStatus === "allow") {
+    if (this.state.mode === "encode" && this.state.coverDownloadStatus === "allow") {
       this.state.downloadCoverImage();
+    } else if (this.state.mode === "decode" && this.state.hiddenDownloadStatus === "allow") {
+      this.state.downloadHiddenImage();
     }
   }
 
   render(): JSX.Element {
+    let allowDownload: boolean;
+    if (this.state.mode === "encode") {
+      allowDownload = this.state.coverDownloadStatus === "allow";
+    } else {
+      allowDownload = this.state.hiddenDownloadStatus === "allow";
+    }
+
     return (
       <div>
         <Navbar />
@@ -218,6 +241,7 @@ export class App extends React.Component<AppProps, AppState> {
               onUpdateSvdState={this.onUpdateSvdState.bind(this)}
               getCoverSize={this.getCoverSize.bind(this)}
               getHiddenSize={this.getHiddenSize.bind(this)}
+              decodedImageSrc={this.state.decodedImageSrc}
               mode={this.state.mode}
             />
           </div>
@@ -257,9 +281,12 @@ export class App extends React.Component<AppProps, AppState> {
               svdState={this.state.svdState}
               getCoverSize={this.getCoverSize.bind(this)}
               getHiddenSize={this.getHiddenSize.bind(this)}
-              downloadStatus={this.state.downloadStatus}
-              onUpdateDownloadStatus={this.onUpdateDownloadStatus.bind(this)}
+              onUpdateCoverDownloadStatus={this.onUpdateCoverDownloadStatus.bind(this)}
               setDownloadCoverImage={(downloadCoverImage) => this.setState({ downloadCoverImage })}
+              onUpdateHiddenDownloadStatus={this.onUpdateHiddenDownloadStatus.bind(this)}
+              setDownloadHiddenImage={(downloadHiddenImage) => this.setState({ downloadHiddenImage })}
+              onUpdateDecodedImage={this.onUpdateDecodedImage.bind(this)}
+              decodedImageSrc={this.state.decodedImageSrc}
               mode={this.state.mode}
             />
           </div>
@@ -268,10 +295,10 @@ export class App extends React.Component<AppProps, AppState> {
           <button
             onClick={this.onClickDownload.bind(this)}
             className={`${styles.download_btn} ${
-              this.state.downloadStatus === "allow" ? styles.download_allow : ""
+              allowDownload ? styles.download_allow : ""
             }`}
           >
-            Download Encoded Cover Image
+            Download { this.state.mode === "encode" ? "Encoded Cover" : "Decoded Hidden"} Image
           </button>
         </div>
       </div>

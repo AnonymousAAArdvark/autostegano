@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Zoom } from "./Zoom";
 import { DragDropUpload } from "./DragDropUpload";
+import { DisabledUpload } from "./DisabledUpload";
 import styles from "../Styles/ImageContainer.module.css";
 
 interface ImageContainerState {
@@ -8,7 +9,7 @@ interface ImageContainerState {
 }
 
 export interface ImageContainerProps {
-  origSrc: null | HTMLImageElement;
+  origSrc: string;
   src: string;
   imgType: string;
   computingMsg: string;
@@ -116,13 +117,15 @@ export class ImageContainer extends React.Component<ImageContainerProps, ImageCo
       );
     }
 
-    if (origSrc === null) {
+    if (origSrc === "") {
       main = <DragDropUpload imgType={imgType} onUploadImage={onUploadImage.bind(this)} />;
+    } else if (origSrc === "disabled") {
+      main = <DisabledUpload />;
     } else {
       main = (
         <Zoom
           src={src}
-          origSrc={origSrc.src}
+          origSrc={origSrc}
           imgType={imgType}
           computingMsg={computingMsg}
           onUpdateStatus={this.onUpdateStatus.bind(this)}

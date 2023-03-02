@@ -61,6 +61,7 @@ export interface HiddenImageProps {
   onUpdateSvdState: (svdState: SvdState) => void;
   getCoverSize: () => number;
   getHiddenSize: () => number;
+  decodedImageSrc: string;
   mode: string;
 }
 
@@ -211,7 +212,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     ) {
       return (
         <ImageContainer
-          origSrc={img}
+          origSrc={img.src}
           src={RgbToSrc(
             svdState.lowRankApproximation,
             resizeState.sImg.width,
@@ -226,7 +227,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     } else if (img && resizeState) {
       return (
         <ImageContainer
-          origSrc={img}
+          origSrc={img.src}
           src={resizeState.sImg.src}
           imgType={"hidden"}
           computingMsg={
@@ -241,7 +242,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     } else {
       return (
         <ImageContainer
-          origSrc={null}
+          origSrc={""}
           src={""}
           imgType={"hidden"}
           computingMsg={""}
@@ -250,7 +251,33 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
         />
       );
     }
+  }
 
+  makeDecodeImageView(): JSX.Element {
+    const { decodedImageSrc, mode } = this.props;
+    if (decodedImageSrc !== "") {
+      return (
+        <ImageContainer
+          origSrc={"empty"}
+          src={decodedImageSrc}
+          imgType={"hidden"}
+          computingMsg={""}
+          onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
+        />
+      )
+    } else {
+      return (
+        <ImageContainer
+          origSrc={"disabled"}
+          src={""}
+          imgType={"hidden"}
+          computingMsg={""}
+          onUploadImage={this.loadImage.bind(this)}
+          mode={mode}
+        />
+      )
+    }
   }
 
   render(): JSX.Element {
@@ -267,7 +294,7 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     const w = Math.trunc(width * scale);
     const h = Math.trunc(height * scale);
 
-    let mainImageView = this.makeEncodeImageView();
+    let mainImageView = mode === "encode" ? this.makeEncodeImageView() : this.makeDecodeImageView();
 
     return (
       <div>

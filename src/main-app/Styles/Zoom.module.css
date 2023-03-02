@@ -21,7 +21,7 @@
 
 .figure_active {
     cursor: pointer;
-    transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+    transition: background-size 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out, z-index 0.01s 0.2s;
 }
 
 .figure_active.decode {

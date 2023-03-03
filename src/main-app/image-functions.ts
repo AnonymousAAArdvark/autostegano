@@ -1,4 +1,5 @@
 import { RGB } from "./rgb";
+import pica from "pica";
 
 export function imageDataToPixels(imageData: ImageData): RGB<Uint8ClampedArray> {
   const n = imageData.width,
@@ -68,4 +69,26 @@ export function resizeImageData(imageData: ImageData, scale: number) {
   }
 
   return newImageData;
+}
+
+export function picaComputeResize(this: any, img: HTMLImageElement, scale: number): void {
+  let resizedCanvas = document.createElement("canvas");
+  resizedCanvas.width = Math.floor(scale * img.width);
+  resizedCanvas.height = Math.floor(scale * img.height);
+
+  if (this.picaCancel !== null) {
+    this.picaCancel();
+    this.picaCancel = null;
+  }
+
+  const cancelPromise = new Promise((resolve, reject) => {
+    this.picaCancel = () => {
+      reject("Resize cancelled");
+    };
+  })
+
+  pica().resize(img, resizedCanvas, { cancelToken: cancelPromise })
+    .then((result: HTMLCanvasElement) => {
+      this.updateScaledImageData(result.toDataURL());
+    }).catch(() => {});
 }

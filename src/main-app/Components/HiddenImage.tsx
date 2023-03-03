@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getImageData, imageDataToPixels, loadImage } from "../image-functions";
+import { getImageData, imageDataToPixels, loadImage, picaComputeResize } from "../image-functions";
 import { SvdComputationManager } from "../ComputationManager/svdComputationManager";
 import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
 import { ImageContainer } from "./ImageContainer";
@@ -68,6 +68,7 @@ export interface HiddenImageProps {
 export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageState> {
   private svdComputationManager: SvdComputationManager;
   private resizeComputationManager: ResizeComputationManager;
+  private picaCancel: null | (() => void) = null;
 
   constructor(props: HiddenImageProps) {
     super(props);
@@ -114,16 +115,27 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
       this.setState({ warnSize: false });
     }
 
-    const pxls = imageDataToPixels(imageData);
+    this.setState({ img } as HiddenImageState);
     this.props.onUpdateHiddenDimensions(width, height);
-    this.props.onUpdateSvdState({ status: SvdStatus.CURRENTLY_COMPUTING });
-    this.setState({
-      resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
-      img,
-    } as HiddenImageState);
-    const numSvs = Math.min(img.width, img.height);
-    this.onUpdateSvs(numSvs);
-    this.svdComputationManager.computeSvd(height, width, pxls, numSvs);
+    if (this.props.hiddenScale === 1) {
+      const pxls = imageDataToPixels(imageData);
+      this.props.onUpdateSvdState({ status: SvdStatus.CURRENTLY_COMPUTING });
+      this.setState({
+        resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
+      } as HiddenImageState);
+      const numSvs = Math.min(img.width, img.height);
+      this.onUpdateSvs(numSvs);
+      this.svdComputationManager.computeSvd(height, width, pxls, numSvs);
+    } else {
+      this.setState({
+        resizeState: { status: ResizeStatus.CURRENTLY_COMPUTING, sImg: img },
+      } as HiddenImageState);
+      if (typeof OffscreenCanvas !== "undefined") {
+        this.resizeComputationManager.computeResize(imageData, this.props.hiddenScale);
+      } else {
+        picaComputeResize.call(this, img, this.props.hiddenScale);
+      }
+    }
   }
 
   updateScaledImage(scale: number): void {
@@ -150,7 +162,11 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
     this.setState({
       resizeState: { ...this.state.resizeState, status: ResizeStatus.CURRENTLY_COMPUTING },
     } as HiddenImageState);
-    this.resizeComputationManager.computeResize(ImageData, scale);
+    if (typeof OffscreenCanvas !== "undefined") {
+      this.resizeComputationManager.computeResize(ImageData, scale);
+    } else {
+      picaComputeResize.call(this, this.state.img as HTMLImageElement, scale);
+    }
   }
 
   updateScaledImageData(url: string): void {

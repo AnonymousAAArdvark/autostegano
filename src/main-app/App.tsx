@@ -89,7 +89,8 @@ export class App extends React.Component<AppProps, AppState> {
 
   getCoverSize(): number {
     const { coverWidth, coverHeight, coverScale, maxLsb } = this.state;
-    return Math.trunc((coverWidth * coverScale * coverHeight * coverScale * 3 * maxLsb) / 8);
+    return Math.trunc(
+      Math.trunc(coverWidth * coverScale) * Math.trunc(coverHeight * coverScale) * 3 * maxLsb / 8);
   }
 
   getHiddenSize(): number {

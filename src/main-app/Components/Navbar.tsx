@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
           </a>
         </li>
         <li className={`${styles.navRight}`}>
-          <a href="https://github.com/your-github-username/your-repository-name" className={styles.navLink}>
+          <a href="https://github.com/anonymousaaaardvark/autostegano" target={"_blank"} className={styles.navLink}>
             <FaGithub className={styles.github_icon}/>
           </a>
         </li>

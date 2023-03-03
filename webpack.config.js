@@ -50,4 +50,9 @@ module.exports = {
     // 'asyncWebAssembly' doesn't work because of https://github.com/rustwasm/wasm-bindgen/issues/2343
     syncWebAssembly: true,
   },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  },
 };

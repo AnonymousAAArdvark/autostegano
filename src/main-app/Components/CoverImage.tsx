@@ -1,5 +1,5 @@
 import * as React from "react";
-import { getImageData, loadImage } from "../image-functions";
+import { getImageData, loadImage, picaComputeResize } from "../image-functions";
 import { StegComputationManager, StegInfo } from "../ComputationManager/stegComputationManager";
 import { ResizeComputationManager } from "../ComputationManager/resizeComputationManager";
 import { ImageContainer } from "./ImageContainer";
@@ -56,6 +56,7 @@ export interface CoverImageProps {
 export class CoverImage extends React.Component<CoverImageProps, CoverImageState> {
   private stegComputationManager: StegComputationManager;
   private resizeComputationManager: ResizeComputationManager;
+  private picaCancel: null | (() => void) = null;
 
   constructor(props: CoverImageProps) {
     super(props);
@@ -135,17 +136,22 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
       }
 
       this.setState({ img } as CoverImageState);
+      this.props.onUpdateCoverDimensions(width, height);
       if (this.props.coverScale === 1) {
-        this.props.onUpdateCoverDimensions(width, height);
         this.setState({
           resizeState: { status: ResizeStatus.COMPUTED, sImg: img },
         } as CoverImageState);
         this.computeEncode(imageData, this.props.maxLsb);
       } else {
         this.setState({
-          resizeState: null,
+          resizeState: { status: ResizeStatus.CURRENTLY_COMPUTING, sImg: img },
         } as CoverImageState);
-        this.resizeComputationManager.computeResize(imageData, this.props.coverScale);
+        this.props.onUpdateCoverDownloadStatus("block");
+        if (typeof OffscreenCanvas !== "undefined") {
+          this.resizeComputationManager.computeResize(imageData, this.props.coverScale);
+        } else {
+          picaComputeResize.call(this, img, this.props.coverScale);
+        }
       }
     } else {
       this.setState({ decodeImg: img } as CoverImageState);
@@ -178,7 +184,11 @@ export class CoverImage extends React.Component<CoverImageProps, CoverImageState
     this.setState({
       resizeState: { ...this.state.resizeState, status: ResizeStatus.CURRENTLY_COMPUTING },
     } as CoverImageState);
-    this.resizeComputationManager.computeResize(ImageData, scale);
+    if (typeof OffscreenCanvas !== "undefined") {
+      this.resizeComputationManager.computeResize(ImageData, scale);
+    } else {
+      picaComputeResize.call(this, this.state.img as HTMLImageElement, scale);
+    }
   }
 
   updateScaledImageData(url: string): void {

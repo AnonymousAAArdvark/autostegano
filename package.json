@@ -20,7 +20,7 @@
   },
   "author": "Andrew Yang",
   "license": "MIT",
-  "homepage": "http://anonymousaaaardvark.github.io/autostegano",
+  "homepage": "https://anonymousaaaardvark.github.io/autostegano",
   "dependencies": {
     "css-loader": "^6.7.3",
     "image-steganography-worker": "file:image-steganography-worker/pkg",

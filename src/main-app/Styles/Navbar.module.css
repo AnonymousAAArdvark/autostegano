@@ -2,13 +2,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    height: 55px;
+
     background-color: #fbfbfb;
     border-bottom: solid 2px #e6e6e6;
 }
 
-/* Logo */
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
@@ -16,31 +14,55 @@
     color: #fff;
 }
 
-/* Navigation list */
 .navList {
     display: flex;
     list-style: none;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     margin: 0;
     padding: 0;
 }
 
-/* Navigation link */
 .navLink {
+    padding: 5px 10px;
+    text-decoration: none;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.navLink:hover {
     text-decoration: none;
 }
 
-/* Navigation link hover state */
-.navLink:hover {
-    text-decoration: underline;
+.logo {
+    width: 50px;
 }
 
-/* Navigation list align left */
+.logo_text {
+    font-size: 25px;
+    margin: 0 5px;
+    color: #2c374a;
+    font-weight: bold;
+}
+
+.logo_text span {
+    color: #1184ea;
+}
+
+.github_icon {
+    font-size: 40px;
+    color: #2c374a;
+}
+
 .navLeft {
     margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Navigation list align right */
 .navRight {
     margin-left: auto;
 }

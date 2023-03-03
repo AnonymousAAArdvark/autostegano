@@ -13,7 +13,7 @@
 }
 
 .hidden_image_container {
-    padding: 0 5px 10px 30px;
+    padding: 0 0 10px 2%;
     width: 100%;
 }
 
@@ -28,7 +28,7 @@
 }
 
 .cover_image_container {
-    padding: 0 30px 10px 5px;
+    padding: 0 2% 10px 0;
     width: 100%;
 }
 
@@ -40,7 +40,7 @@
 
 .section_label {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 5px;
     margin-bottom: 5px;
     font-size: 32px;
     border-bottom: 3px solid #2c374a;
@@ -51,7 +51,7 @@
 }
 
 .group_btn {
-    margin-top: 22px;
+    margin-top: 15px;
     position: absolute;
     margin-left: auto;
     margin-right: auto;

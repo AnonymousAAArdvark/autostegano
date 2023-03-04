@@ -35,18 +35,20 @@ export class MaxLSBSlider extends React.Component<MaxLSBSliderProps, MaxLSBSlide
             Auto
           </button>
         </div>
-        <Slider
-          value={value}
-          onChange={this.onChange.bind(this)}
-          min={1}
-          max={8}
-          defaultValue={1}
-          step={1}
-          activeDotStyle={{ borderColor: `${disabled ? "#cae0f4" : "#0072da"}` }}
-          marks={{ 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8 }}
-          disabled={disabled}
-          className={`${styles.slider} ${disabled ? styles.slider_disabled : styles.slider_enabled}`}
-        />
+        <div className={styles.slider_container}>
+          <Slider
+            value={value}
+            onChange={this.onChange.bind(this)}
+            min={1}
+            max={8}
+            defaultValue={1}
+            step={1}
+            activeDotStyle={{ borderColor: `${disabled ? "#cae0f4" : "#0072da"}` }}
+            marks={{ 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8 }}
+            disabled={disabled}
+            className={`${styles.slider} ${disabled ? styles.slider_disabled : styles.slider_enabled}`}
+          />
+        </div>
       </div>
     );
   }

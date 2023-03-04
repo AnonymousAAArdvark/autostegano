@@ -58,17 +58,19 @@ export class ResizeSlider extends React.Component<ResizeSliderProps, ResizeSlide
             Auto
           </button>
         </div>
-        <Slider
-          value={this.toIndex(value)}
-          onChange={this.onChange.bind(this)}
-          min={1}
-          max={33}
-          defaultValue={16}
-          activeDotStyle={{ borderColor: `${disabled ? "#cae0f4" : "#0072da"}` }}
-          marks={this.generateMarks(8, 1, 33)}
-          disabled={disabled}
-          className={`${styles.slider} ${disabled ? styles.slider_disabled : styles.slider_enabled}`}
-        />
+        <div className={styles.slider_container}>
+          <Slider
+            value={this.toIndex(value)}
+            onChange={this.onChange.bind(this)}
+            min={1}
+            max={33}
+            defaultValue={16}
+            activeDotStyle={{ borderColor: `${disabled ? "#cae0f4" : "#0072da"}` }}
+            marks={this.generateMarks(8, 1, 33)}
+            disabled={disabled}
+            className={`${styles.slider} ${disabled ? styles.slider_disabled : styles.slider_enabled}`}
+          />
+        </div>
       </div>
     );
   }

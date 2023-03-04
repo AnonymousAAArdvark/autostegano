@@ -49,3 +49,33 @@
     border-radius: 5px;
     border: 2px solid #e6e6e6;
 }
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .calc_container {
+        padding: 10px 0;
+    }
+
+    .calc {
+        font-size: 35px;
+        margin: 15px 0;
+        padding: 0 10px;
+    }
+
+    .result_container {
+        font-size: 40px;
+    }
+
+    .options_container {
+        padding: 20px 30px 30px 30px;
+        border-radius: 20px;
+        border: 2px solid #e6e6e6;
+    }
+}
+
+@media only screen and (max-width: 915px), only screen and (hover: none) and (pointer: coarse) {
+    .calc_container.left {
+        justify-content: flex-start;
+        text-align: left;
+    }
+}
+

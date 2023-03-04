@@ -2,14 +2,10 @@ import * as React from "react";
 import Navbar from "./Components/Navbar";
 import { HiddenImage } from "./Components/HiddenImage";
 import { CoverImage } from "./Components/CoverImage";
-import { ImageContainer } from "./Components/ImageContainer";
 import { SvdStatus, SvdState } from "./svdstate";
-import Slider from "rc-slider";
-import { MaxLSBSlider } from "./Components/Slider/MaxLSBSlider";
-import { ResizeSlider } from "./Components/Slider/ResizeSlider";
-import { SingularValuesSlider } from "./Components/Slider/SingularValuesSlider";
 import { VscChevronRight } from "react-icons/vsc";
 import styles from "./Styles/App.module.css";
+import windowResizeStyles from "./Styles/WindowResize.module.css";
 
 interface AppState {
   hiddenWidth: number;
@@ -180,6 +176,37 @@ export class App extends React.Component<AppProps, AppState> {
     }
   }
 
+  makeGroupBtn(id: string): JSX.Element {
+    return (
+      <div className={styles.group_btn_container}>
+        <div className={styles.group_btn}>
+          <input
+            type={"radio"}
+            id={"encode" + id}
+            name={"mode" + id}
+            value={"encode"}
+            checked={this.state.mode === "encode"}
+            onChange={this.handleModeChange.bind(this)}
+          />
+          <label className={styles.mode_btn} htmlFor={"encode" + id}>
+            Encode
+          </label>
+          <input
+            type={"radio"}
+            id={"decode" + id}
+            name={"mode" + id}
+            value={"decode"}
+            checked={this.state.mode === "decode"}
+            onChange={this.handleModeChange.bind(this)}
+          />
+          <label className={styles.mode_btn} htmlFor={"decode" + id}>
+            Decode
+          </label>
+        </div>
+      </div>
+    );
+  }
+
   render(): JSX.Element {
     let allowDownload: boolean;
     if (this.state.mode === "encode") {
@@ -191,38 +218,19 @@ export class App extends React.Component<AppProps, AppState> {
     return (
       <div>
         <Navbar />
-        <div className={styles.header_container}>
+        <div className={`${styles.header_container} ${windowResizeStyles.wide_flex}`}>
           <div className={styles.section_label_container}>
             <h2 className={styles.section_label}>Hidden Image</h2>
           </div>
-          <div className={styles.group_btn_container}>
-            <div className={styles.group_btn}>
-              <input
-                type={"radio"}
-                id={"encode"}
-                name={"mode"}
-                value={"encode"}
-                checked={this.state.mode === "encode"}
-                onChange={this.handleModeChange.bind(this)}
-              />
-              <label className={styles.mode_btn} htmlFor={"encode"}>
-                Encode
-              </label>
-              <input
-                type={"radio"}
-                id={"decode"}
-                name={"mode"}
-                value={"decode"}
-                checked={this.state.mode === "decode"}
-                onChange={this.handleModeChange.bind(this)}
-              />
-              <label className={styles.mode_btn} htmlFor={"decode"}>
-                Decode
-              </label>
-            </div>
-          </div>
+          { this.makeGroupBtn("_wide") }
           <div className={styles.section_label_container}>
             <h2 className={styles.section_label}>Cover Image</h2>
+          </div>
+        </div>
+        <div className={windowResizeStyles.narrow_block}>
+          { this.makeGroupBtn("_narrow") }
+          <div className={styles.section_label_container}>
+            <h2 className={styles.section_label}>Hidden Image</h2>
           </div>
         </div>
         <div className={styles.main}>
@@ -266,6 +274,9 @@ export class App extends React.Component<AppProps, AppState> {
                 } `
               }
             />
+          </div>
+          <div className={`${styles.section_label_container} ${windowResizeStyles.narrow_flex}`}>
+            <h2 className={styles.section_label}>Cover Image</h2>
           </div>
           <div className={styles.cover_image_container}>
             <CoverImage

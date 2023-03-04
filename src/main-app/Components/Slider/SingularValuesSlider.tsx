@@ -59,17 +59,19 @@ export class SingularValuesSlider extends React.Component<
             Auto
           </button>
         </div>
-        <Slider
-          value={this.toIndex(value)}
-          onChange={this.onChange.bind(this)}
-          min={1}
-          max={this.toIndex(max)}
-          defaultValue={this.toIndex(max)}
-          activeDotStyle={{ borderColor: `${disabled ? "#cae0f4" : "#0072da"}` }}
-          marks={this.generateMarks(8, 1, this.toIndex(max))}
-          disabled={disabled}
-          className={`${styles.slider} ${disabled ? styles.slider_disabled : styles.slider_enabled}`}
-        />
+        <div className={styles.slider_container}>
+          <Slider
+              value={this.toIndex(value)}
+              onChange={this.onChange.bind(this)}
+              min={1}
+              max={this.toIndex(max)}
+              defaultValue={this.toIndex(max)}
+              activeDotStyle={{ borderColor: `${disabled ? "#cae0f4" : "#0072da"}` }}
+              marks={this.generateMarks(8, 1, this.toIndex(max))}
+              disabled={disabled}
+              className={`${styles.slider} ${disabled ? styles.slider_disabled : styles.slider_enabled}`}
+            />
+        </div>
       </div>
     );
   }

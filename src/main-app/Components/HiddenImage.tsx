@@ -9,6 +9,7 @@ import { SvdState, SvdStatus } from "../svdstate";
 import { ResizeState, ResizeStatus } from "../resizestate";
 import { RGB } from "../rgb";
 import styles from "../Styles/Image.module.css";
+import windowResizeStyles from "../Styles/WindowResize.module.css";
 
 function RgbToSrc(
   rgbArray: RGB<[Uint8ClampedArray, Uint16Array, Uint16Array]>,
@@ -318,12 +319,23 @@ export class HiddenImage extends React.Component<HiddenImageProps, HiddenImageSt
         <div
           className={`${styles.calc_container} ${styles.left} ${mode === "encode" ? "" : styles.disabled}`}
         >
+          <div className={`${styles.result_container} ${windowResizeStyles.narrow_block}`}>
+            <span
+              className={
+                `${canEncode ? styles.green : styles.red} ` +
+                `${mode === "encode" ? "" : styles.disabled}`
+              }
+            >
+              {getHiddenSize().toLocaleString()} bytes{" "}
+            </span>
+            =
+          </div>
           <p className={styles.calc}>
             (<b>{w.toLocaleString()}</b> width + <b>{h.toLocaleString()}</b> height) *{" "}
             <b>{numSvs.toLocaleString()}</b> rank * <b>3</b> channels * <b>2</b> bytes-per-float32 +{" "}
             <b>{width ? 6 : 0}</b> bytes of metadata
           </p>
-          <div className={styles.result_container}>
+          <div className={`${styles.result_container} ${windowResizeStyles.wide_block}`}>
             =
             <span
               className={

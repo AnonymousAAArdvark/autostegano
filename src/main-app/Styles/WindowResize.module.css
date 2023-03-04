@@ -1,0 +1,33 @@
+.wide_block {
+    display: block !important;
+}
+
+.wide_flex {
+    display: flex !important;
+}
+
+.narrow_block {
+    display: none !important;
+}
+
+.narrow_flex {
+    display: none !important;
+}
+
+@media only screen and (max-width: 915px), only screen and (hover: none) and (pointer: coarse) {
+    .wide_block {
+        display: none !important;
+    }
+
+    .wide_flex {
+        display: none !important;
+    }
+
+    .narrow_block {
+        display: block !important;
+    }
+
+    .narrow_flex {
+        display: flex !important;
+    }
+}

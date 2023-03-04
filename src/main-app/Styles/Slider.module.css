@@ -43,6 +43,10 @@
     cursor: not-allowed;
 }
 
+.slider_container {
+    padding: 0;
+}
+
 .slider {
     margin-bottom: 20px;
     z-index: 0;
@@ -97,4 +101,72 @@
 
 .slider_disabled > div:nth-of-type(5) span {
     color: #c8c8c8;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .slider_label_container {
+        margin-bottom: 15px;
+    }
+
+    .slider_label {
+        margin: 25px 0;
+        font-size: 45px;
+    }
+
+    .auto_button {
+        font-size: 45px;
+        margin: 10px 0 10px 0;
+        height: auto;
+        padding: 7px 16px;
+        border-radius: 15px;
+    }
+
+    .button_enabled {
+        border: 6px solid #0072da;
+    }
+
+    .button_disabled {
+        border: 6px solid #85b0d5;
+    }
+
+    .slider_container {
+        padding: 0 10px;
+    }
+
+    .slider {
+        margin-bottom: 60px;
+    }
+
+    .slider > div:nth-of-type(1) {
+        height: 10px;
+    }
+
+    .slider > div:nth-of-type(2) {
+        height: 10px;
+    }
+
+    .slider > div:nth-of-type(3) span {
+        width: 20px;
+        height: 20px;
+        border-width: 5px;
+        bottom: -11px;
+    }
+
+    .slider > div:nth-of-type(4) {
+        width: 50px;
+        height: 50px;
+        margin-top: -22px;
+        border-radius: 20px;
+        border-width: 6px;
+        opacity: 1;
+    }
+
+    .slider_enabled > div:nth-of-type(4):active {
+        box-shadow: 0 0 0 20px rgba(0, 114, 218, .3);
+    }
+
+    .slider > div:nth-of-type(5) span {
+        font-size: 35px;
+        margin-top: 15px;
+    }
 }

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { MdUpload } from "react-icons/md";
 import styles from "../Styles/DragDropUpload.module.css";
+import windowResizeStyles from "../Styles/WindowResize.module.css";
 
 interface DragDropUploadState {
   dragActive: boolean;
@@ -69,9 +70,10 @@ export class DragDropUpload extends React.Component<DragDropUploadProps, DragDro
         >
           <div>
             <MdUpload className={styles.upload_icon}/>
-            <p className={styles.upload_text}>Drag and drop your image here,</p>
-            <p className={styles.upload_text}>or click to upload</p>
-            <p className={styles.upload_tip}>(only .png, .jpg, and .jpeg files allowed)</p>
+            <p className={`${styles.upload_text} ${windowResizeStyles.desktop}`}>Drag and drop your image here,</p>
+            <p className={`${styles.upload_text} ${windowResizeStyles.desktop}`}>or click to upload</p>
+            <p className={`${styles.upload_text} ${windowResizeStyles.mobile}`}>Tap to upload image</p>
+            <p className={`${styles.upload_tip}`}>(only .png, .jpg, and .jpeg files allowed)</p>
           </div>
         </label>
         { dragActive &&

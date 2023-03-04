@@ -14,6 +14,14 @@
     display: none !important;
 }
 
+.desktop {
+    display: block;
+}
+
+.mobile {
+    display: none;
+}
+
 @media only screen and (max-width: 915px), only screen and (hover: none) and (pointer: coarse) {
     .wide_block {
         display: none !important;
@@ -29,5 +37,15 @@
 
     .narrow_flex {
         display: flex !important;
+    }
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .desktop {
+        display: none;
+    }
+
+    .mobile {
+        display: block;
     }
 }

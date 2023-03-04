@@ -66,9 +66,9 @@
     }
 
     .options_container {
-        padding: 20px 30px 30px 30px;
+        padding: 10px 30px 20px 30px;
         border-radius: 20px;
-        border: 2px solid #e6e6e6;
+        border: 6px solid #e6e6e6;
     }
 }
 

@@ -110,15 +110,15 @@
 
     .slider_label {
         margin: 25px 0;
-        font-size: 45px;
+        font-size: 40px;
     }
 
     .auto_button {
-        font-size: 45px;
+        font-size: 40px;
         margin: 10px 0 10px 0;
         height: auto;
         padding: 7px 16px;
-        border-radius: 15px;
+        border-radius: 20px;
     }
 
     .button_enabled {
@@ -134,7 +134,7 @@
     }
 
     .slider {
-        margin-bottom: 60px;
+        margin-bottom: 50px;
     }
 
     .slider > div:nth-of-type(1) {
@@ -166,7 +166,7 @@
     }
 
     .slider > div:nth-of-type(5) span {
-        font-size: 35px;
-        margin-top: 15px;
+        font-size: 30px;
+        margin-top: 12px;
     }
 }

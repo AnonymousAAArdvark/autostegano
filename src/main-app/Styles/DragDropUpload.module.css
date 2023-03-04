@@ -26,18 +26,6 @@
     background-color: #fbfbfb;
 }
 
-.upload_button {
-    cursor: pointer;
-    padding: 0.25rem;
-    font-size: 16px;
-    border: none;
-    background-color: transparent;
-}
-
-.upload_button:hover {
-    text-decoration-line: underline;
-}
-
 .upload_icon {
     font-size: 100px;
 }
@@ -55,9 +43,31 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    border-radius: 1rem;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .form_image_upload {
+        height: 60vh;
+    }
+
+    .label_image_upload {
+        border-width: 6px;
+    }
+
+    .upload_icon {
+        font-size: 200px;
+    }
+
+    .upload_text {
+        font-size: 45px;
+        color: #2c374a;
+    }
+
+    .upload_tip {
+        font-size: 40px;
+    }
 }

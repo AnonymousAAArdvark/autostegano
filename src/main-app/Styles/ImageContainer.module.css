@@ -67,3 +67,45 @@
     border: 2px solid #85b0d5;
     cursor: not-allowed;
 }
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .mobile_flip {
+        flex-direction: row-reverse;
+    }
+
+    .hover_tip_container {
+        height: 80px;
+        width: 500px;
+    }
+
+    .right {
+        left: 0;
+        right: auto;
+    }
+
+    .hover_tip {
+        padding: 12px 24px;
+        font-size: 40px;
+    }
+
+    .inactive {
+        bottom: -160px;
+    }
+
+    .upload_btn {
+        margin: 5px 0;
+        height: 75px;
+        padding: 8px 16px;
+        color: #fbfbfb;
+        border-radius: 20px;
+        font-size: 40px;
+    }
+
+    .upload_btn.enabled {
+        border: 6px solid #0072da;
+    }
+
+    .upload_btn.disabled {
+        border: 6px solid #85b0d5;
+    }
+}

@@ -18,3 +18,17 @@
     color: #2c374a;
     margin-top: 0;
 }
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .disabled_upload_container {
+        height: 60vh;
+    }
+
+    .ellipsis_icon {
+        font-size: 200px;
+    }
+
+    .upload_text {
+        font-size: 45px;
+    }
+}

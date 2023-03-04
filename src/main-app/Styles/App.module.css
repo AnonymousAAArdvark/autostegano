@@ -257,7 +257,7 @@
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
     .section_label {
         margin-top: 0;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         padding: 0 20% 10px 20%;
         font-size: 60px;
         border-bottom: 5px solid #2c374a;
@@ -273,8 +273,7 @@
 
     .group_btn_container {
         width: 100%;
-        margin-top: 50px;
-        margin-bottom: 30px;
+        margin: 50px 0;
     }
 
     .group_btn input {
@@ -282,8 +281,23 @@
     }
 
     .mode_btn {
-        padding: 15px 15%;
-        font-size: 45px;
+        padding: 15px 10%;
+        font-size: 50px;
+        border-width: 6px;
+    }
+
+    .mode_btn:nth-of-type(1) {
+        border-radius: 20px 0 0 20px;
+        border-right: 3px solid #e6e6e6;
+    }
+
+    .mode_btn:nth-of-type(2) {
+        border-radius: 0 20px 20px 0;
+        border-left: 3px solid #e6e6e6;
+    }
+
+    .ratio_container {
+        padding: 30px 0;
     }
 
     .top_ratio {
@@ -303,7 +317,7 @@
     .download_btn {
         margin: auto;
         padding: 12px 24px;
-        font-size: 45px;
+        font-size: 50px;
         border: 6px solid #92dc92;
         border-radius: 20px;
         color: #fbfbfb;

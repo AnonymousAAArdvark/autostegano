@@ -110,7 +110,7 @@ export class ImageContainer extends React.Component<ImageContainerProps, ImageCo
       );
     } else {
       image_top = (
-        <div className={styles.image_top}>
+        <div className={`${styles.image_top} ${styles.mobile_flip}`}>
           {uploadButton}
           {hoverTipContainer}
         </div>

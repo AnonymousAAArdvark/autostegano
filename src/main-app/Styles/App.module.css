@@ -315,15 +315,17 @@
     }
 
     .download_btn {
-        margin: auto;
         padding: 12px 24px;
         font-size: 50px;
         border: 6px solid #92dc92;
         border-radius: 20px;
-        color: #fbfbfb;
+    }
+
+    .download_allow {
+        border: 6px solid #00a500;
     }
 
     .download_container {
-        margin: 25px 0;
+        margin: 25px 0 50px 0;
     }
 }

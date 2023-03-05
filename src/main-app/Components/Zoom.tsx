@@ -52,13 +52,19 @@ export class Zoom extends React.Component<ZoomProps, ZoomState> {
     const resizeBox = this.figure.current.parentElement as HTMLElement;
     const figureAspectRatio =
       this.figure.current.firstChild.offsetWidth / this.figure.current.firstChild.offsetHeight;
+    const figureMobileAspectRatio =
+      this.figureMobile.current.firstChild.offsetWidth / this.figureMobile.current.firstChild.offsetHeight;
     const resizeBoxAspectRatio = resizeBox.offsetWidth / resizeBox.offsetHeight;
 
     if (figureAspectRatio < resizeBoxAspectRatio) {
       this.setAutoWidth(this.figure);
-      this.setAutoWidth(this.figureMobile);
     } else {
       this.setAutoHeight(this.figure);
+    }
+
+    if (figureMobileAspectRatio < resizeBoxAspectRatio) {
+      this.setAutoWidth(this.figureMobile);
+    } else {
       this.setAutoHeight(this.figureMobile);
     }
   };

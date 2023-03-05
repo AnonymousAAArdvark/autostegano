@@ -1,6 +1,7 @@
 import * as React from "react";
 import { SpinningCircles, TailSpin } from "react-loading-icons";
 import styles from "../Styles/Zoom.module.css";
+import windowResizeStyles from "../Styles/WindowResize.module.css";
 
 interface ZoomState {
   backgroundImage: string;
@@ -19,13 +20,17 @@ export interface ZoomProps {
 export class Zoom extends React.Component<ZoomProps, ZoomState> {
   private resizeObserver: ResizeObserver;
   private figure: React.RefObject<any>;
+  private figureMobile: React.RefObject<any>;
   private resizeBox: React.RefObject<any>;
+  private mobileShowOrig: boolean;
 
   constructor(props: ZoomProps) {
     super(props);
     this.figure = React.createRef();
+    this.figureMobile = React.createRef();
     this.resizeBox = React.createRef();
     this.resizeObserver = new ResizeObserver(this.updateFigureSize);
+    this.mobileShowOrig = false;
     this.state = {
       backgroundImage: `url(${this.props.src})`,
       backgroundPosition: "0% 0%",
@@ -50,17 +55,27 @@ export class Zoom extends React.Component<ZoomProps, ZoomState> {
     const resizeBoxAspectRatio = resizeBox.offsetWidth / resizeBox.offsetHeight;
 
     if (figureAspectRatio < resizeBoxAspectRatio) {
-      this.figure.current.style.width = "auto";
-      this.figure.current.style.height = "100%";
-      this.figure.current.firstChild.style.width = "auto";
-      this.figure.current.firstChild.style.height = "100%";
+      this.setAutoWidth(this.figure);
+      this.setAutoWidth(this.figureMobile);
     } else {
-      this.figure.current.style.width = "100%";
-      this.figure.current.style.height = "auto";
-      this.figure.current.firstChild.style.width = "100%";
-      this.figure.current.firstChild.style.height = "auto";
+      this.setAutoHeight(this.figure);
+      this.setAutoHeight(this.figureMobile);
     }
   };
+
+  setAutoWidth(figure: React.RefObject<any>) {
+    figure.current.style.width = "auto";
+    figure.current.style.height = "100%";
+    figure.current.firstChild.style.width = "auto";
+    figure.current.firstChild.style.height = "100%";
+  }
+
+  setAutoHeight(figure: React.RefObject<any>) {
+    figure.current.style.width = "100%";
+    figure.current.style.height = "auto";
+    figure.current.firstChild.style.width = "100%";
+    figure.current.firstChild.style.height = "auto";
+  }
 
   handleMouseMove(e: React.MouseEvent<HTMLElement>) {
     if (this.props.computingMsg === "") {
@@ -96,6 +111,19 @@ export class Zoom extends React.Component<ZoomProps, ZoomState> {
     }
   }
 
+  handleTap(e: React.MouseEvent<HTMLElement>) {
+    if (this.props.computingMsg === "" && this.props.mode === "encode") {
+      if (!this.mobileShowOrig) {
+        this.mobileShowOrig = true;
+        this.setState({ backgroundImage: `url(${this.props.origSrc})` });
+      } else {
+        this.mobileShowOrig = false;
+        this.setState({ backgroundImage: `url(${this.props.src})` });
+      }
+      this.props.onUpdateStatus("tap");
+    }
+  }
+
   render(): JSX.Element {
     const { computingMsg, mode } = this.props;
     let computingMsgElement: JSX.Element;
@@ -103,13 +131,24 @@ export class Zoom extends React.Component<ZoomProps, ZoomState> {
     if (computingMsg !== "") {
       computingMsgElement = (
         <div className={styles.computing_msg_container}>
-          <TailSpin height={20} stroke={"#fbfbfb"} strokeWidth={3} />
+          <TailSpin height={20} stroke={"#fbfbfb"} strokeWidth={3} className={styles.spinner}/>
           <p className={styles.computing_msg}>{computingMsg}</p>
         </div>
       );
     } else {
       computingMsgElement = <></>;
     }
+
+    let figureContent = (
+      <>
+        <img
+          src={this.props.src}
+          onLoad={this.updateFigureSize}
+          className={`${styles.img} ${this.mobileShowOrig ? styles.mobile_show_orig : ""}`}
+        />
+        {computingMsgElement}
+      </>
+    );
 
     return (
       <div ref={this.resizeBox} className={styles.image_container}>
@@ -123,11 +162,24 @@ export class Zoom extends React.Component<ZoomProps, ZoomState> {
           className={
             `${styles.figure} ` +
             `${computingMsg !== "" ? styles.figure_inactive : styles.figure_active} ` +
-            `${mode === "encode" ? "" : styles.decode}`
+            `${mode === "encode" ? "" : styles.decode} ` +
+            `${windowResizeStyles.desktop}`
           }
         >
-          <img src={this.props.src} onLoad={this.updateFigureSize} className={styles.img} />
-          {computingMsgElement}
+          { figureContent }
+        </figure>
+        <figure
+          onClick={(e) => this.handleTap(e)}
+          style={this.state}
+          ref={this.figureMobile}
+          className={
+            `${styles.figure} ` +
+            `${computingMsg !== "" ? styles.figure_inactive : styles.figure_active} ` +
+            `${mode === "encode" ? "" : styles.decode} ` +
+            `${windowResizeStyles.mobile}`
+          }
+        >
+          { figureContent }
         </figure>
       </div>
     );

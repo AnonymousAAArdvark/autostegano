@@ -78,9 +78,9 @@
         width: 500px;
     }
 
-    .right {
-        left: 0;
-        right: auto;
+    .left {
+        right: 0;
+        left: auto;
     }
 
     .hover_tip {

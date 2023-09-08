@@ -11,7 +11,18 @@ https://github.com/AnonymousAAArdvark/autostegano/assets/42499336/0f9f5cb2-7da4-
 https://github.com/AnonymousAAArdvark/autostegano/assets/42499336/4ff090bc-f1fd-4ed0-a704-a6550cf22544
 
 
-
+- [Description](#description)
+- [How this works](#how-this-works)
+  * [What is Singular Value Decomposition?](#what-is-singular-value-decomposition-)
+  * [What is Reduced Singular Value Decomposition?](#what-is-reduced-singular-value-decomposition-)
+  * [How can RSVD be applied to an image?](#how-can-rsvd-be-applied-to-an-image-)
+  * [How much data is needed to store this approximation?](#how-much-data-is-needed-to-store-this-approximation-)
+  * [Drawbacks of SVD Compression](#drawbacks-of-svd-compression)
+- [How THIS works](#how-this-works)
+  * [What is Steganography?](#what-is-steganography-)
+  * [Steganography Technique - LSB](#steganography-technique---lsb)
+- [Aiding Steganography with SVD Compression](#aiding-steganography-with-svd-compression)
+- [Authors](#authors)
 
 ## Description
 
@@ -96,18 +107,14 @@ Can't tell a difference? Look closer! The image on the right has its pixel value
   - Hidden Image:
     - \# of values needed to store before: m * n * 3
     - \# of values needed to store after: (m + n) * r * 3
+  - Cover Image:
+    - \# of values that the image is able to store: m * n * 3 * mLSB / 8
+- Additionally, the use of SVD ensures that the hidden image is embedded in a way that is not easily detectable, as it decomposes the image into two sets of matrices that is further compressed into binary data.
 
+This was done as a final presentation project for a Linear Algebra Class. The slides can be found here: 
+https://docs.google.com/presentation/d/1zcsz9viRww-1mQlNn8txCOQ2xaIBcKVjRTCh4BXOoJI/edit?usp=sharing
 
 ## Authors
 
 Andrew Yang
-ex. [@AnonymousAAArdvark](https://github.com/anonymousaaardvark)
-
-## Acknowledgments
-
-Inspiration, code snippets, etc.
-* [awesome-readme](https://github.com/matiassingers/awesome-readme)
-* [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [dbader](https://github.com/dbader/readme-template)
-* [zenorocha](https://gist.github.com/zenorocha/4526327)
-* [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+[@AnonymousAAArdvark](https://github.com/anonymousaaardvark)

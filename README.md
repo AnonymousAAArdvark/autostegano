@@ -114,7 +114,18 @@ Can't tell a difference? Look closer! The image on the right has its pixel value
 This was done as a final presentation project for a Linear Algebra Class. The slides can be found here: 
 https://docs.google.com/presentation/d/1zcsz9viRww-1mQlNn8txCOQ2xaIBcKVjRTCh4BXOoJI/edit?usp=sharing
 
-## Authors
+## Build 
 
-Andrew Yang
-[@AnonymousAAArdvark](https://github.com/anonymousaaardvark)
+```bash
+$ npm install
+```
+
+and run
+
+```bash
+$ npm run build-all
+```
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details

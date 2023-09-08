@@ -110,9 +110,6 @@ Can't tell a difference? Look closer! The image on the right has its pixel value
     - \# of values that the image is able to store: m * n * 3 * mLSB / 8
 - Additionally, the use of SVD ensures that the hidden image is embedded in a way that is not easily detectable, as it decomposes the image into two sets of matrices that is further compressed into binary data.
 
-This was done as a final presentation project for a Linear Algebra Class. The slides can be found here: 
-https://docs.google.com/presentation/d/1zcsz9viRww-1mQlNn8txCOQ2xaIBcKVjRTCh4BXOoJI/edit?usp=sharing
-
 ## Build 
 
 ```bash

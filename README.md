@@ -22,7 +22,6 @@ https://github.com/AnonymousAAArdvark/autostegano/assets/42499336/4ff090bc-f1fd-
   * [What is Steganography?](#what-is-steganography-)
   * [Steganography Technique - LSB](#steganography-technique---lsb)
 - [Aiding Steganography with SVD Compression](#aiding-steganography-with-svd-compression)
-- [Authors](#authors)
 
 ## Description
 

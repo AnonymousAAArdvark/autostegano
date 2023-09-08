@@ -78,7 +78,24 @@ Can't tell a difference? Look closer! The image on the right has its pixel value
 
 - The Least Significant Bit (LSB) method is one of the most common techniques used in image steganography.
 - In this method, the least significant bit(s) of each pixel in an image is modified to contain a secret message.
-- In an 8-bit grayscale image, each pixel has a value between 0 and 255. 
+- In an 8-bit grayscale image, each pixel has a value between 0 and 255.
+
+![image](https://github.com/AnonymousAAArdvark/autostegano/assets/42499336/6d9aef84-acb0-45d2-b016-588797d4237a)
+
+![image](https://github.com/AnonymousAAArdvark/autostegano/assets/42499336/979bf383-bb21-4908-8050-3044db785155)
+
+- This bar shows how a pixel's color is modified depending on which bit has been altered. 
+- As you can see, the most significant bits are on the left, and the most significant are on the right. 
+- This is the exact same as in base 10 numbers! For example, changing 1 digit of 9,999,999 on the left (9,999,990) has significantly less of an impact on the number compared to changing the rightmost digit (0,999,999). 
+- As the digit changed becomes more significant, the color changes more drastically.
+![image](https://github.com/AnonymousAAArdvark/autostegano/assets/42499336/f4ae67b5-749b-4457-97b6-42f04d587f4e)
+
+## Aiding Steganography with SVD Compression
+
+- By decreasing the amount of data to store the hidden image in the cover image, SVD compression can both increase the quality of the resulting cover image, as well as increase its maximum capacity.
+  - Hidden Image:
+    - \# of values needed to store before: m * n * 3
+    - \# of values needed to store after: (m + n) * r * 3
 
 
 ## Authors

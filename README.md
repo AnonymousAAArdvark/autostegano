@@ -25,7 +25,7 @@ https://github.com/AnonymousAAArdvark/autostegano/assets/42499336/4ff090bc-f1fd-
 
 ## Description
 
-- AutoStegano is an image steganography web program utilizing ReactJS and Web Workers which hides a secret image within a cover image, that involves embedding data in the image's pixel color values, allowing for exceptionally secure data concealment due to using novel algorithms to compress the hidden image, as well as hiding the image in "plain sight" inside another image through utilizing steganography techiniques.
+- [AutoStegano](http://autostegano.us.to/) is an image steganography web program utilizing ReactJS and Web Workers which hides a secret image within a cover image, that involves embedding data in the image's pixel color values, allowing for exceptionally secure data concealment due to using novel algorithms to compress the hidden image, as well as hiding the image in "plain sight" inside another image through utilizing steganography techiniques.
 - Linear Algebra is used to compress the hidden image through representing the image as three color matrices, and then reducing the rows and columns of the resultant matrices computed through Singular Value Decomposition.
 - Web Workers written in Rust are employed to sideload complex and intensive matrix computations from the React Javascript frontend to the more performant language Rust, which requires a parallel and asynchronous structure to communicate concisely and precisely between the user interface and backend.
 
